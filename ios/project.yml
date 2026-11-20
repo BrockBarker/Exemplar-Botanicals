@@ -1,5 +1,5 @@
 # XcodeGen spec for the iPhone app. Generate the Xcode project with:
-#   brew install xcodegen   (once)
+#   brew install xcodegen   (once; or download it, see docs/SETUP.md)
 #   cd ios && xcodegen generate
 # The generated ExemplarBotanicals.xcodeproj is not committed; regenerate it after pulling.
 name: ExemplarBotanicals
