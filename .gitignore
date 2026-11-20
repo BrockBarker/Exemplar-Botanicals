@@ -1,0 +1,20 @@
+# macOS / Xcode
+.DS_Store
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+*.ipa
+*.dSYM.zip
+.swiftpm/
+.build/
+
+# App secrets (copy Secrets.example.xcconfig to Secrets.xcconfig)
+ios/Config/Secrets.xcconfig
+
+# Backend
+node_modules/
+.wrangler/
+.dev.vars
+dist/
+backend/src/persona.generated.ts
