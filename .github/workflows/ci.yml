@@ -20,8 +20,8 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -39,7 +39,33 @@ jobs:
       run:
         working-directory: ios/Packages/GardenCore
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: swift --version
       - run: swift build --build-tests
       - run: swift test --skip-build
+
+  # Builds the iPhone app on a GitHub macOS runner. Manual only (Actions tab > CI > Run workflow):
+  # macOS minutes on a private repo count 10x against the free allowance, and day-to-day builds
+  # run on David's Mac instead.
+  ios-app:
+    name: iPhone app (build, manual)
+    if: github.event_name == 'workflow_dispatch'
+    needs: garden-core
+    runs-on: macos-15
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v5
+      - run: brew install xcodegen
+      - run: xcodegen generate
+      - run: xcodebuild -version
+      - run: >
+          xcodebuild build
+          -project ExemplarBotanicals.xcodeproj
+          -scheme ExemplarBotanicals
+          -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath build/DerivedData
+          CODE_SIGNING_ALLOWED=NO
+          -quiet

@@ -1,0 +1,95 @@
+import Foundation
+import SwiftData
+import GardenCore
+
+/// Small JSON files in Application Support for things that aren't garden records:
+/// the weather history, the nudge ledger and nudge wording.
+enum Store {
+    static let weatherFile = "weather.json"
+    static let ledgerFile = "nudges.json"
+    static let phrasingFile = "nudge-wording.json"
+
+    private static var directory: URL {
+        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        let dir = base.appendingPathComponent("Garden", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+
+    static func load<T: Decodable>(_ type: T.Type, from name: String) -> T? {
+        guard let data = try? Data(contentsOf: directory.appendingPathComponent(name)) else { return nil }
+        return try? JSONDecoder().decode(T.self, from: data)
+    }
+
+    static func save<T: Encodable>(_ value: T, to name: String) {
+        guard let data = try? JSONEncoder().encode(value) else { return }
+        try? data.write(to: directory.appendingPathComponent(name), options: .atomic)
+    }
+
+    static func remove(_ name: String) {
+        try? FileManager.default.removeItem(at: directory.appendingPathComponent(name))
+    }
+
+    /// A short stable hash (FNV-1a) for cache keys.
+    static func stableHash(_ text: String) -> String {
+        var hash: UInt64 = 0xcbf2_9ce4_8422_2325
+        for byte in text.utf8 {
+            hash ^= UInt64(byte)
+            hash = hash &* 0x0000_0100_0000_01b3
+        }
+        return String(hash, radix: 16)
+    }
+}
+
+/// Everything about the garden, loaded from SwiftData in one go.
+struct LoadedGarden {
+    let profile: GardenProfile
+    let beds: [Bed]
+    let plants: [Plant]
+    let journal: [JournalEntry]
+    let inventory: [InventoryItem]
+    let notes: [CoachNote]
+
+    func state(weather: WeatherReport?) -> GardenState {
+        GardenState(
+            beds: beds.map { $0.info },
+            plants: plants.map { $0.info },
+            journal: journal.map { $0.info },
+            inventory: inventory.map { $0.info },
+            weather: weather
+        )
+    }
+}
+
+@MainActor
+enum GardenRepository {
+    static func existingProfile(_ context: ModelContext) -> GardenProfile? {
+        var descriptor = FetchDescriptor<GardenProfile>(sortBy: [SortDescriptor(\.created)])
+        descriptor.fetchLimit = 1
+        return (try? context.fetch(descriptor))?.first
+    }
+
+    /// The gardener's profile, created on first use.
+    static func profile(_ context: ModelContext) -> GardenProfile {
+        if let existing = existingProfile(context) { return existing }
+        let profile = GardenProfile()
+        context.insert(profile)
+        try? context.save()
+        return profile
+    }
+
+    static func load(_ context: ModelContext) -> LoadedGarden {
+        LoadedGarden(
+            profile: profile(context),
+            beds: (try? context.fetch(FetchDescriptor<Bed>(sortBy: [SortDescriptor(\.created)]))) ?? [],
+            plants: (try? context.fetch(FetchDescriptor<Plant>(sortBy: [SortDescriptor(\.created)]))) ?? [],
+            journal: (try? context.fetch(FetchDescriptor<JournalEntry>(sortBy: [SortDescriptor(\.created)]))) ?? [],
+            inventory: (try? context.fetch(FetchDescriptor<InventoryItem>(sortBy: [SortDescriptor(\.created)]))) ?? [],
+            notes: (try? context.fetch(FetchDescriptor<CoachNote>(sortBy: [SortDescriptor(\.created)]))) ?? []
+        )
+    }
+
+    static func chatHistory(_ context: ModelContext) -> [ChatMessage] {
+        (try? context.fetch(FetchDescriptor<ChatMessage>(sortBy: [SortDescriptor(\.created)]))) ?? []
+    }
+}

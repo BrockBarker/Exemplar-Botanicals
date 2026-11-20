@@ -481,7 +481,8 @@ public struct CoachEndpoint: Sendable {
             .replacingOccurrences(of: "http://", with: "")
             .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         let s = (secret ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !h.isEmpty, !s.isEmpty, !h.contains("$("), !s.contains("$("), !h.hasPrefix("your-"),
+        // Empty, an unexpanded build variable, or the example values: not configured.
+        guard !h.isEmpty, !s.isEmpty, !h.contains("$("), !s.contains("$("), !h.contains("your-"), !s.hasPrefix("paste-"),
               let url = URL(string: "https://\(h)") else { return nil }
         self.init(baseURL: url, secret: s)
     }
