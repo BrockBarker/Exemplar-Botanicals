@@ -92,8 +92,20 @@ public struct GardenSnapshot: Codable, Sendable {
         public var count: Int
         public var staked: Bool?
         public var lastFed: String?
+        public var lastHarvested: String?
         public var growingDegreeDays: Double?
         public var notes: String?
+        public var care: Care?
+    }
+
+    /// Starter facts about the crop, so the coach can talk harvest timing, pests and pruning.
+    public struct Care: Codable, Sendable {
+        public var firstHarvestAroundDay: Int?
+        public var readyWhen: String
+        public var pickEveryDays: Int?
+        public var watchFor: String?
+        public var pruning: String?
+        public var sowAgainEveryDays: Int?
     }
 
     public struct Note: Codable, Sendable {
@@ -199,6 +211,19 @@ extension GardenSnapshot {
                 .filter { $0.kind.countsAsFeeding && $0.applies(to: plant, bedName: bedName) }
                 .map { $0.day }
                 .max()
+            let lastHarvested = state.journal
+                .filter { $0.kind == .harvest && $0.applies(to: plant, bedName: bedName) }
+                .map { $0.day }
+                .max()
+            let crop = plant.crop
+            let care: Care? = crop.id == CropCatalog.other.id ? nil : Care(
+                firstHarvestAroundDay: crop.care.firstHarvestDays,
+                readyWhen: crop.care.readyWhen,
+                pickEveryDays: crop.care.pickEveryDays,
+                watchFor: crop.care.watchFor,
+                pruning: crop.care.prune,
+                sowAgainEveryDays: crop.care.sowAgainDays
+            )
             var gdd: Double?
             if let planted = plant.plantedOn, let weather = state.weather, planted <= yesterday {
                 let total = Agronomy.gddTotal(weather.days, from: planted, through: yesterday, baseF: plant.crop.gddBaseF, calendar: calendar)
@@ -216,8 +241,10 @@ extension GardenSnapshot {
                 count: plant.count,
                 staked: plant.crop.needsSupport ? plant.staked : nil,
                 lastFed: lastFed?.string,
+                lastHarvested: lastHarvested?.string,
                 growingDegreeDays: gdd,
-                notes: nonEmpty(plant.notes)
+                notes: nonEmpty(plant.notes),
+                care: care
             )
         }
 

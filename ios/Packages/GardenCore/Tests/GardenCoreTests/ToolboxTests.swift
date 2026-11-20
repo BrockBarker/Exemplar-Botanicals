@@ -4,16 +4,31 @@ import XCTest
 final class ToolboxTests: XCTestCase {
     func testFreeBeforeLowCostBeforeBranded() {
         let ranked = Toolbox.ranked(for: .feed, inventory: [])
-        XCTAssertEqual(ranked.first?.id, "urine")
+        XCTAssertEqual(ranked.first?.id, "compost")
         XCTAssertEqual(ranked.map { $0.tier }, ranked.map { $0.tier }.sorted())
-        XCTAssertEqual(ranked.filter { $0.tier == .free }.map { $0.id }, ["urine", "compost", "comfrey_tea"])
+        XCTAssertEqual(ranked.filter { $0.tier == .free }.map { $0.id }, ["compost", "comfrey_tea"])
         XCTAssertTrue(ranked.filter { $0.tier == .branded }.allSatisfy { !$0.price.isEmpty })
     }
 
-    func testAvoidUrine() {
-        let ranked = Toolbox.ranked(for: .feed, inventory: [], avoidUrine: true)
-        XCTAssertEqual(ranked.first?.id, "compost")
-        XCTAssertFalse(ranked.contains { $0.id == "urine" })
+    func testUrineOnlyWhenAskedFor() {
+        XCTAssertFalse(Toolbox.ranked(for: .feed, inventory: []).contains { $0.id == "urine" })
+        let asked = Toolbox.ranked(for: .feed, inventory: [], includeUrine: true)
+        XCTAssertEqual(asked.filter { $0.tier == .free }.map { $0.id }, ["compost", "comfrey_tea", "urine"])
+    }
+
+    func testPestOptionsStartGentle() {
+        let ranked = Toolbox.ranked(for: .pests, inventory: [InventoryInfo(name: "Safer insecticidal soap", category: .pestControl)])
+        XCTAssertEqual(ranked.first?.tier, .owned)
+        XCTAssertEqual(ranked.dropFirst().prefix(2).map { $0.id }, ["hand_pick", "water_blast"])
+        XCTAssertFalse(ranked.contains { $0.id == "insecticidal_soap" })
+    }
+
+    func testEveryCropHasCareNotes() {
+        for crop in CropCatalog.all {
+            XCTAssertNotNil(CropCatalog.careByID[crop.id], "\(crop.id) needs a CropCare entry")
+        }
+        XCTAssertEqual(CropCatalog.profile(for: "tomato").care.firstHarvestDays, 70)
+        XCTAssertNil(CropCatalog.care(for: "nope").firstHarvestDays)
     }
 
     func testOwnedItemsComeFirstAndReplaceTheirGenericEntry() {
@@ -29,7 +44,7 @@ final class ToolboxTests: XCTestCase {
         XCTAssertTrue(ranked[0].howTo.contains("tablespoon"))
         XCTAssertEqual(ranked[1].name, "Mystery bloom booster")
         XCTAssertEqual(ranked[1].howTo, "Use it as the label directs for this.")
-        XCTAssertEqual(ranked[2].id, "urine")
+        XCTAssertEqual(ranked[2].id, "compost")
         XCTAssertFalse(ranked.contains { $0.id == "fish_seaweed" })
         XCTAssertFalse(ranked.contains { $0.name == "Rake" })
     }

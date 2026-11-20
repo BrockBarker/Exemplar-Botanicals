@@ -88,7 +88,7 @@ struct OnboardingView: View {
             }
             Text("Hi, I'm \(app.coachName).")
                 .font(.largeTitle.bold())
-            Text("I'll help you grow a healthy organic garden: when to water, feed, spray and stake, based on your own weather. Tell me what you have, and I'll always start with what's free or already in your shed.")
+            Text("I'll help you grow a healthy organic garden: when to water, harvest, prune, stake, check for pests, sow again and feed, based on your own weather. Tell me what you have, and I'll always start with what's free or already in your shed.")
                 .font(.body)
             Text("This is an AI coach built from \(app.coachName)'s advice and way of talking. \(app.coachName) isn't reading the chat.")
                 .font(.footnote)
@@ -211,7 +211,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("What do you already have?")
                 .font(.title2.bold())
-            Text("I'll suggest what you own first, then free options like compost, leaves, kitchen scraps or diluted urine, then cheap ones, and only then products to buy.")
+            Text("I'll suggest what you own first, then free options like compost, leaves or kitchen scraps, then cheap ones, and only then products to buy.")
                 .foregroundStyle(.secondary)
             ForEach(Self.commonSupplies) { item in
                 Toggle(item.name, isOn: Binding(
@@ -239,7 +239,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Nudges, not nagging")
                 .font(.title2.bold())
-            Text("I'll send a heads-up when it matters: frost tonight, a heat wave coming, a bed that's probably dry, a calm morning for a foliar spray, time to stake or feed.")
+            Text("I'll send a heads-up when it matters: frost tonight, a heat wave coming, a bed that's probably dry, something ready to pick, a pest check, time to prune, stake or sow again.")
             VStack(alignment: .leading, spacing: 8) {
                 Label("At most 2 a day", systemImage: "bell.badge")
                 Label("Nothing between 9 PM and 7 AM", systemImage: "moon.zzz")

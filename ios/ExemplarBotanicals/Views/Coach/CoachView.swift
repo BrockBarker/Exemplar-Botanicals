@@ -11,10 +11,10 @@ struct CoachView: View {
     @State private var confirmClear = false
 
     private static let suggestions = [
-        "What should I feed my tomatoes, using what I have?",
-        "Is today a good day for a foliar spray?",
-        "How do I know when to water?",
-        "My lower leaves are turning yellow. What's going on?",
+        "What should I be doing in the garden this week?",
+        "What's ready to harvest, and how do I tell?",
+        "Something is chewing holes in my leaves. What do I do?",
+        "What can I sow next for a steady supply?",
     ]
 
     var body: some View {

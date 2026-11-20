@@ -99,6 +99,11 @@ extension NudgeKind {
         case .waterNow, .moistureCheck: return .teal
         case .wind, .staking: return .brown
         case .foliar, .firstFeed, .feed: return .green
+        case .harvest: return .red
+        case .pestCheck: return .purple
+        case .pruning: return .mint
+        case .succession: return .indigo
+        case .seasonEnd: return .gray
         }
     }
 }

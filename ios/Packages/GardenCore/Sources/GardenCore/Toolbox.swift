@@ -6,6 +6,7 @@ public enum GardenNeed: String, Codable, Sendable {
     case foliar
     case mulch
     case frostCover
+    case pests
 }
 
 /// A starter list of organic options the app can suggest offline (nudges, demo mode).
@@ -53,11 +54,6 @@ public enum Toolbox {
     public static let options: [OrganicOption] = [
         // Feeding
         OrganicOption(
-            id: "urine", name: "Diluted urine", tier: .free, needs: [.feed],
-            howTo: "Mix 1 part fresh urine with 10 parts water and pour about a quart around each plant's root zone, not on the leaves.",
-            caution: "Skip it on leafy greens and root crops within a month of harvest.", keywords: ["urine"], isUrine: true
-        ),
-        OrganicOption(
             id: "compost", name: "Compost or worm castings", tier: .free, needs: [.feed],
             howTo: "Side-dress about an inch of finished compost around the plant and scratch it in lightly, then water.",
             keywords: ["compost", "casting", "vermicompost"]
@@ -66,6 +62,12 @@ public enum Toolbox {
             id: "comfrey_tea", name: "Comfrey or weed tea", tier: .free, needs: [.feed],
             howTo: "Steep a bucket of comfrey or weed leaves in water for 2 to 3 weeks, dilute about 1 to 10, and pour it on the soil.",
             caution: "It smells strong; keep a lid on the bucket.", keywords: ["comfrey", "weed tea"]
+        ),
+        // Offered only when asked for (see `ranked`), never as the default suggestion.
+        OrganicOption(
+            id: "urine", name: "Diluted urine", tier: .free, needs: [.feed],
+            howTo: "Mix 1 part fresh urine with 10 parts water and pour about a quart around each plant's root zone, not on the leaves.",
+            caution: "Skip it on leafy greens and root crops within a month of harvest.", keywords: ["urine"], isUrine: true
         ),
         OrganicOption(
             id: "alfalfa", name: "Alfalfa pellets", tier: .lowCost, needs: [.feed],
@@ -141,6 +143,35 @@ public enum Toolbox {
             keywords: ["wood chip", "chips"]
         ),
 
+        // Pests (organic, gentlest first)
+        OrganicOption(
+            id: "hand_pick", name: "Pick them off", tier: .free, needs: [.pests],
+            howTo: "Knock beetles, caterpillars and egg clusters into a cup of soapy water; early morning, when they're sluggish, works best.",
+            keywords: []
+        ),
+        OrganicOption(
+            id: "water_blast", name: "A hard spray of water", tier: .free, needs: [.pests],
+            howTo: "Blast aphids and mites off the stems and leaf undersides with the hose in the morning, every couple of days.",
+            keywords: []
+        ),
+        OrganicOption(
+            id: "insecticidal_soap", name: "Insecticidal soap (e.g. Safer Brand)", tier: .lowCost, needs: [.pests],
+            howTo: "Spray soft-bodied pests like aphids directly, in the evening; it only works on contact.",
+            caution: "Test a few leaves first on sensitive plants.", price: "about $8 to $12 a bottle",
+            keywords: ["insecticidal soap", "safer"]
+        ),
+        OrganicOption(
+            id: "bt", name: "Bt for caterpillars (e.g. Monterey B.t., Bonide Thuricide)", tier: .branded, needs: [.pests],
+            howTo: "Spray leaves where caterpillars are feeding, in the evening; it affects only caterpillars.",
+            price: "about $12 to $20", keywords: ["bt", "thuricide", "bacillus"]
+        ),
+        OrganicOption(
+            id: "neem", name: "Neem oil (e.g. Garden Safe, Bonide)", tier: .branded, needs: [.pests],
+            howTo: "Mix as the label says and spray at dusk, coating leaf undersides; repeat weekly while pests persist.",
+            caution: "Spray only when bees aren't out, and not above about 90°F.", price: "about $10 to $18",
+            keywords: ["neem"]
+        ),
+
         // Frost
         OrganicOption(
             id: "sheets", name: "Old sheets or blankets", tier: .free, needs: [.frostCover],
@@ -161,12 +192,15 @@ public enum Toolbox {
         case .foliar: return [.foliar]
         case .mulch: return [.mulch]
         case .frostCover: return []
+        case .pests: return [.pestControl]
         }
     }
 
     /// Options for a need, in use-what-you-have order: owned, free, low cost, branded.
-    public static func ranked(for need: GardenNeed, inventory: [InventoryInfo], avoidUrine: Bool = false) -> [RankedOption] {
-        let candidates = options.filter { $0.needs.contains(need) && !(avoidUrine && $0.isUrine) }
+    /// Diluted urine is left out unless `includeUrine` is set (the gardener asked about it):
+    /// it's one free option among several, not the default answer.
+    public static func ranked(for need: GardenNeed, inventory: [InventoryInfo], includeUrine: Bool = false) -> [RankedOption] {
+        let candidates = options.filter { $0.needs.contains(need) && (includeUrine || !$0.isUrine) }
         var owned: [RankedOption] = []
         var ownedOptionIDs: Set<String> = []
 

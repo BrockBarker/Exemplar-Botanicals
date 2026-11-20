@@ -135,7 +135,7 @@ struct TodayView: View {
             Card {
                 Text("Add your beds and plants")
                     .font(.headline)
-                Text("Water and feeding nudges need to know what's growing where.")
+                Text("Watering, harvest and care nudges need to know what's growing where.")
                     .foregroundStyle(.secondary)
                 Button("Go to Garden") { app.selectedTab = .garden }
                     .buttonStyle(.bordered)

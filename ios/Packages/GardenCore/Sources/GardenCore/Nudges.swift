@@ -11,6 +11,11 @@ public enum NudgeKind: String, Codable, CaseIterable, Sendable {
     case foliar
     case firstFeed = "first_feed"
     case feed
+    case harvest
+    case pestCheck = "pest_check"
+    case pruning
+    case succession
+    case seasonEnd = "season_end"
 
     public var displayName: String {
         switch self {
@@ -24,6 +29,11 @@ public enum NudgeKind: String, Codable, CaseIterable, Sendable {
         case .foliar: return "Foliar spray"
         case .firstFeed: return "First feeding"
         case .feed: return "Feeding"
+        case .harvest: return "Harvest"
+        case .pestCheck: return "Pest check"
+        case .pruning: return "Pruning"
+        case .succession: return "Sow again"
+        case .seasonEnd: return "End of season"
         }
     }
 
@@ -38,6 +48,11 @@ public enum NudgeKind: String, Codable, CaseIterable, Sendable {
         case .staking: return "arrow.up.to.line"
         case .foliar: return "sprinkler.and.droplets.fill"
         case .firstFeed, .feed: return "leaf.fill"
+        case .harvest: return "basket.fill"
+        case .pestCheck: return "ant.fill"
+        case .pruning: return "scissors"
+        case .succession: return "leaf.arrow.circlepath"
+        case .seasonEnd: return "calendar.badge.clock"
         }
     }
 }
@@ -52,7 +67,7 @@ public struct NudgeSettings: Codable, Hashable, Sendable {
     public var quietEndMinute: Int = 7 * 60
     /// Preferred time for routine nudges (default 7:30 AM).
     public var deliveryMinute: Int = 7 * 60 + 30
-    public var foliarIntervalDays: Int = 14
+    public var foliarIntervalDays: Int = 21
     public var heatThresholdF: Double = 90
     public var frostThresholdF: Double = 34
     public var windThresholdMph: Double = 25
@@ -146,13 +161,21 @@ public struct GardenState: Sendable {
     public var journal: [JournalInfo]
     public var inventory: [InventoryInfo]
     public var weather: WeatherReport?
+    /// From the gardener's profile, when they've set them.
+    public var lastSpringFrost: LocalDay?
+    public var firstFallFrost: LocalDay?
 
-    public init(beds: [BedInfo], plants: [PlantInfo], journal: [JournalInfo], inventory: [InventoryInfo], weather: WeatherReport?) {
+    public init(
+        beds: [BedInfo], plants: [PlantInfo], journal: [JournalInfo], inventory: [InventoryInfo], weather: WeatherReport?,
+        lastSpringFrost: LocalDay? = nil, firstFallFrost: LocalDay? = nil
+    ) {
         self.beds = beds
         self.plants = plants
         self.journal = journal
         self.inventory = inventory
         self.weather = weather
+        self.lastSpringFrost = lastSpringFrost
+        self.firstFallFrost = firstFallFrost
     }
 
     public func plants(in bed: BedInfo) -> [PlantInfo] {

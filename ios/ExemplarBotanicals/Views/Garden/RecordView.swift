@@ -14,6 +14,8 @@ enum RecordSubject: Hashable {
 /// anywhere (by hand, from a nudge, or by the coach) shows up here.
 struct GardenRecordView: View {
     @Environment(AppModel.self) private var app
+    @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
     @Query(sort: \Bed.created) private var beds: [Bed]
     @Query(sort: \Plant.created) private var plants: [Plant]
     @Query(sort: \JournalEntry.created, order: .reverse) private var entries: [JournalEntry]
@@ -24,6 +26,7 @@ struct GardenRecordView: View {
     @State private var editingEntry: JournalEntry?
     @State private var addingPhoto = false
     @State private var logging = false
+    @State private var addingPlant = false
     @State private var viewing: PhotoViewerStart?
     @State private var comparing: TreatmentComparison?
     @State private var historyLimit = 15
@@ -98,6 +101,13 @@ struct GardenRecordView: View {
         .sheet(isPresented: $addingPhoto) {
             AddProgressPhotoSheet(subject: subject)
         }
+        .sheet(isPresented: $addingPlant) {
+            PlantEditor(plant: nil, defaultBedID: bed?.id)
+        }
+        .onChange(of: scope == nil) { _, gone in
+            // Deleted from its own Edit sheet: go back to the list.
+            if gone { dismiss() }
+        }
         .sheet(isPresented: $logging) {
             JournalEntryEditor(entry: nil, defaultBedID: bed?.id ?? plant?.bedID, defaultPlantID: plant?.id)
         }
@@ -145,6 +155,9 @@ struct GardenRecordView: View {
 
     private func content(_ data: RecordData) -> some View {
         List {
+            if let bed = bed {
+                plantsSection(bed)
+            }
             Section {
                 summary
                 HStack(spacing: 12) {
@@ -163,9 +176,8 @@ struct GardenRecordView: View {
                     }
                     .buttonStyle(.bordered)
                 }
-            }
-            if let bed = bed {
-                plantsSection(bed)
+            } header: {
+                if bed != nil { Text("About this bed") }
             }
             photosSection(data)
             treatmentsSection(data)
@@ -180,6 +192,9 @@ struct GardenRecordView: View {
             if let planted = plant.plantedDay {
                 let days = planted.days(to: app.today, calendar: app.calendar)
                 LabeledContent("Planted", value: days >= 0 ? "\(dayText(planted, calendar: app.calendar)) · \(days) days ago" : dayText(planted, calendar: app.calendar))
+            }
+            if let harvest = harvestText(plant) {
+                LabeledContent("Harvest", value: harvest)
             }
             if let bed = beds.first(where: { $0.id == plant.bedID }) {
                 NavigationLink {
@@ -209,19 +224,40 @@ struct GardenRecordView: View {
         }
     }
 
+    /// "Around day 70 · 12 days to go", from the planting date and the crop's usual timing.
+    private func harvestText(_ plant: Plant) -> String? {
+        guard let first = plant.crop.care.firstHarvestDays, let planted = plant.plantedDay,
+              plant.stage != .seedling else { return nil }
+        let days = planted.days(to: app.today, calendar: app.calendar)
+        guard days >= 0 else { return nil }
+        let left = first - days
+        if left > 1 { return "Around day \(first) · \(left) days to go" }
+        if left == 1 { return "Around day \(first) · about a day to go" }
+        return "Usually ready from day \(first)"
+    }
+
     private func plantsSection(_ bed: Bed) -> some View {
         let here = plants.filter { $0.bedID == bed.id }
-        return Section("Plants") {
-            if here.isEmpty {
-                Text("No plants in this bed yet.")
-                    .foregroundStyle(.secondary)
-            }
+        let total = here.reduce(0) { $0 + $1.count }
+        return Section {
             ForEach(here) { plant in
                 NavigationLink {
                     GardenRecordView(subject: .plant(plant.id))
                 } label: {
                     PlantRow(plant: plant)
                 }
+            }
+            .onDelete { offsets in deletePlants(offsets, from: here, context: context, app: app) }
+            Button {
+                addingPlant = true
+            } label: {
+                Label("Add a plant", systemImage: "plus")
+            }
+        } header: {
+            Text(total == 0 ? "Plants" : "Plants (\(total))")
+        } footer: {
+            if here.isEmpty {
+                Text("Add what's growing here: the type and how many. Each plant gets its own record and photos too.")
             }
         }
     }

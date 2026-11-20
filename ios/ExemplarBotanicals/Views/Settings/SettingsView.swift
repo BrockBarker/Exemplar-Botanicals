@@ -273,7 +273,7 @@ struct CoachAboutView: View {
             }
             Section {
                 Text("The coach is an AI built from \(app.coachName)'s gardening advice, opinions and way of talking. \(app.coachName) isn't reading your chats, and the coach will say so if you ask.")
-                Text("Advice is strictly organic. Suggestions start with what you already have, then free options like compost, leaves, kitchen scraps or diluted urine, then low-cost ones, and only then products to buy, with typical prices.")
+                Text("Advice is strictly organic. Suggestions start with what you already have, then free options like compost, leaves or kitchen scraps, then low-cost ones, and only then products to buy, with typical prices.")
                 Text("Photo checks look for water stress and nutrient problems. When it's hard to tell, the coach says so and may suggest a soil test.")
             }
             Section("Privacy") {
