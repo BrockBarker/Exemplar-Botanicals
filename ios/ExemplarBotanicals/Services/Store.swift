@@ -89,6 +89,21 @@ enum GardenRepository {
         )
     }
 
+    /// Entries saved before `photoAdded` existed (photo checks) get it filled in once, so they
+    /// show up in the bed and plant galleries.
+    static func backfillPhotoDates(_ context: ModelContext) {
+        let key = "eb.backfill.photoAdded.v1"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+        let entries = (try? context.fetch(FetchDescriptor<JournalEntry>())) ?? []
+        var changed = false
+        for entry in entries where entry.photoAdded == nil && entry.photo != nil {
+            entry.photoAdded = entry.created
+            changed = true
+        }
+        if changed { try? context.save() }
+        UserDefaults.standard.set(true, forKey: key)
+    }
+
     static func chatHistory(_ context: ModelContext) -> [ChatMessage] {
         (try? context.fetch(FetchDescriptor<ChatMessage>(sortBy: [SortDescriptor(\.created)]))) ?? []
     }

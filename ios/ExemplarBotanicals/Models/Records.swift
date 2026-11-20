@@ -178,7 +178,11 @@ final class JournalEntry {
     var notes: String = ""
     /// Who wrote it: "you", "coach", "nudge" or "photo".
     var source: String = "you"
+    /// Set it with `setPhoto(_:)` so `photoAdded` stays in step.
     @Attribute(.externalStorage) var photo: Data?
+    /// When the photo was added or last replaced; nil when there's no photo. Lets lists find
+    /// photo entries without loading the images, and tells thumbnails when to refresh.
+    var photoAdded: Date?
     /// JSON of a GardenCore Diagnosis, for photo checks.
     var diagnosisData: Data?
     var created: Date = Date()
@@ -210,6 +214,19 @@ final class JournalEntry {
     var diagnosis: Diagnosis? {
         guard let data = diagnosisData else { return nil }
         return try? JSONDecoder().decode(Diagnosis.self, from: data)
+    }
+
+    var hasPhoto: Bool { photoAdded != nil }
+
+    func setPhoto(_ data: Data?) {
+        photo = data
+        photoAdded = data == nil ? nil : Date()
+    }
+
+    /// For the bed and plant records; nil when there's no photo.
+    var progressPhoto: ProgressPhoto? {
+        guard hasPhoto else { return nil }
+        return ProgressPhoto(id: id, day: localDay, bedID: bedID, plantID: plantID, created: created)
     }
 
     var info: JournalInfo {

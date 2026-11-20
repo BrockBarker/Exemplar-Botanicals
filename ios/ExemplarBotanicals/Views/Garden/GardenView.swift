@@ -12,7 +12,6 @@ struct GardenView: View {
 
     @State private var editingBed: Bed?
     @State private var addingBed = false
-    @State private var editingPlant: Plant?
     @State private var addingPlantToBed: Bed?
     @State private var addingLoosePlant = false
     @State private var showSettings = false
@@ -22,10 +21,18 @@ struct GardenView: View {
             List {
                 ForEach(beds) { bed in
                     Section {
+                        NavigationLink {
+                            GardenRecordView(subject: .bed(bed.id))
+                        } label: {
+                            Label("Bed record and photos", systemImage: "photo.on.rectangle.angled")
+                                .foregroundStyle(.tint)
+                        }
                         ForEach(plants.filter { $0.bedID == bed.id }) { plant in
-                            PlantRow(plant: plant)
-                                .contentShape(Rectangle())
-                                .onTapGesture { editingPlant = plant }
+                            NavigationLink {
+                                GardenRecordView(subject: .plant(plant.id))
+                            } label: {
+                                PlantRow(plant: plant)
+                            }
                         }
                         .onDelete { offsets in delete(offsets, from: plants.filter { $0.bedID == bed.id }) }
                         Button {
@@ -42,9 +49,11 @@ struct GardenView: View {
                 if !loose.isEmpty {
                     Section("Not in a bed") {
                         ForEach(loose) { plant in
-                            PlantRow(plant: plant)
-                                .contentShape(Rectangle())
-                                .onTapGesture { editingPlant = plant }
+                            NavigationLink {
+                                GardenRecordView(subject: .plant(plant.id))
+                            } label: {
+                                PlantRow(plant: plant)
+                            }
                         }
                         .onDelete { offsets in delete(offsets, from: loose) }
                     }
@@ -101,9 +110,6 @@ struct GardenView: View {
             }
             .sheet(isPresented: $addingBed) {
                 BedEditor(bed: nil)
-            }
-            .sheet(item: $editingPlant) { plant in
-                PlantEditor(plant: plant, defaultBedID: plant.bedID)
             }
             .sheet(item: $addingPlantToBed) { bed in
                 PlantEditor(plant: nil, defaultBedID: bed.id)
@@ -194,6 +200,10 @@ struct BedEditor: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     let bed: Bed?
+
+    init(bed: Bed?) {
+        self.bed = bed
+    }
 
     @State private var name = ""
     @State private var kind: BedKind = .raised
@@ -330,6 +340,11 @@ struct PlantEditor: View {
     @Query(sort: \Bed.created) private var beds: [Bed]
     let plant: Plant?
     let defaultBedID: UUID?
+
+    init(plant: Plant?, defaultBedID: UUID?) {
+        self.plant = plant
+        self.defaultBedID = defaultBedID
+    }
 
     @State private var name = ""
     @State private var cropID = CropCatalog.other.id

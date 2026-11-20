@@ -94,7 +94,15 @@ struct JournalView: View {
 }
 
 struct JournalRow: View {
+    @Environment(AppModel.self) private var app
     let entry: JournalEntry
+    /// Show the day in the caption (the Journal tab groups by day instead).
+    let showDay: Bool
+
+    init(entry: JournalEntry, showDay: Bool = false) {
+        self.entry = entry
+        self.showDay = showDay
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -104,8 +112,10 @@ struct JournalRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(entry.what)
                 let place = [entry.plantName, entry.bedName].filter { !$0.isEmpty }.joined(separator: " · ")
-                if !place.isEmpty || !entry.amount.isEmpty {
-                    Text([place, entry.amount].filter { !$0.isEmpty }.joined(separator: " · "))
+                let day = showDay ? dayText(entry.localDay, calendar: app.calendar) : ""
+                let caption = [day, place, entry.amount].filter { !$0.isEmpty }.joined(separator: " · ")
+                if !caption.isEmpty {
+                    Text(caption)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -116,10 +126,8 @@ struct JournalRow: View {
                 }
             }
             Spacer()
-            if let data = entry.photo, let image = UIImage(data: data) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
+            if entry.hasPhoto {
+                JournalPhotoView(entry: entry)
                     .frame(width: 44, height: 44)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
             }
@@ -143,7 +151,18 @@ struct JournalEntryEditor: View {
     @Query(sort: \Bed.created) private var beds: [Bed]
     @Query(sort: \Plant.created) private var plants: [Plant]
     let entry: JournalEntry?
+    /// Where a new entry starts, e.g. when logging from a bed's or plant's record.
+    let defaultBedID: UUID?
+    let defaultPlantID: UUID?
 
+    init(entry: JournalEntry?, defaultBedID: UUID? = nil, defaultPlantID: UUID? = nil) {
+        self.entry = entry
+        self.defaultBedID = defaultBedID
+        self.defaultPlantID = defaultPlantID
+    }
+
+    @State private var newImage: UIImage?
+    @State private var removePhoto = false
     @State private var date = Date()
     @State private var kind: JournalKind = .watering
     @State private var what = ""
@@ -185,17 +204,10 @@ struct JournalEntryEditor: View {
                 Section("Notes") {
                     TextField("Anything else", text: $notes, axis: .vertical)
                 }
-                if let entry = entry {
-                    if let diagnosis = entry.diagnosis {
-                        Section("Photo check") {
-                            if let data = entry.photo, let image = UIImage(data: data) {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                            }
-                            DiagnosisResultView(diagnosis: diagnosis)
-                        }
+                photoSection
+                if let diagnosis = entry?.diagnosis {
+                    Section("Photo check") {
+                        DiagnosisResultView(diagnosis: diagnosis)
                     }
                 }
             }
@@ -211,6 +223,46 @@ struct JournalEntryEditor: View {
                 }
             }
             .onAppear(perform: load)
+        }
+    }
+
+    private var showsSavedPhoto: Bool {
+        newImage == nil && !removePhoto && (entry?.hasPhoto ?? false)
+    }
+
+    private var photoSection: some View {
+        Section {
+            if let image = newImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxWidth: .infinity, maxHeight: 260)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            } else if showsSavedPhoto, let entry = entry {
+                JournalPhotoView(entry: entry, size: .large, contentMode: .fit)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 260)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            }
+            PhotoSourceButtons(chooseTitle: newImage != nil || showsSavedPhoto ? "Replace" : "Choose photo") { image, taken in
+                newImage = image
+                removePhoto = false
+                // A library photo of a new entry dates the entry, unless the day was already changed.
+                if entry == nil, let taken = taken, LocalDay(date, calendar: app.calendar) == app.today {
+                    date = min(taken, Date())
+                }
+            }
+            if newImage != nil || showsSavedPhoto {
+                Button("Remove photo", role: .destructive) {
+                    newImage = nil
+                    removePhoto = true
+                }
+                .buttonStyle(.borderless)
+            }
+        } header: {
+            Text("Photo")
+        } footer: {
+            Text("Photos show up in the bed's or plant's record, next to what you did.")
         }
     }
 
@@ -235,7 +287,11 @@ struct JournalEntryEditor: View {
     }
 
     private func load() {
-        guard let entry = entry else { return }
+        guard let entry = entry else {
+            plantID = defaultPlantID
+            bedID = defaultBedID ?? plants.first { $0.id == defaultPlantID }?.bedID
+            return
+        }
         date = entry.localDay.date(atMinute: 12 * 60, in: app.calendar)
         kind = entry.kind
         what = entry.what
@@ -270,6 +326,11 @@ struct JournalEntryEditor: View {
         target.plantName = plant?.name ?? ""
         target.moisture = (kind == .moistureCheck || kind == .watering) ? moisture : nil
         target.notes = notes
+        if let image = newImage {
+            target.setPhoto(ImagePrep.forJournal(image))
+        } else if removePhoto {
+            target.setPhoto(nil)
+        }
         app.save()
         Task { await app.replanNudges() }
         dismiss()
