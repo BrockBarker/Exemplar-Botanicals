@@ -1,0 +1,19 @@
+name = "exemplar-botanicals"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Non-secret settings. Secrets are set with `npx wrangler secret put NAME`:
+#   ANTHROPIC_API_KEY   (required) Claude API key
+#   APP_SHARED_SECRET   (required) long random string; the same value goes in the app's Secrets.xcconfig
+#   ELEVENLABS_API_KEY  (optional) turns on the cloned-voice option
+#   ELEVENLABS_VOICE_ID (optional) the voice ID of David's cloned voice in ElevenLabs
+[vars]
+CLAUDE_MODEL = "claude-opus-5-5"
+CHAT_EFFORT = "medium"
+DIAGNOSE_EFFORT = "high"
+NUDGE_EFFORT = "low"
+ELEVENLABS_MODEL_ID = "eleven_multilingual_v2"
+
+[observability]
+enabled = true
