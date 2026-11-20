@@ -217,7 +217,7 @@ struct DiagnoseView: View {
             }
         }
         entry.notes = diagnosis.summary
-        if let image = image { entry.photo = ImagePrep.thumbnail(image) }
+        if let image = image { entry.setPhoto(ImagePrep.forJournal(image)) }
         entry.diagnosisData = try? JSONEncoder().encode(diagnosis)
         context.insert(entry)
         app.save()
@@ -370,6 +370,10 @@ struct FixCard: View {
 struct CameraPicker: UIViewControllerRepresentable {
     @Binding var image: UIImage?
     @Environment(\.dismiss) private var dismiss
+
+    init(image: Binding<UIImage?>) {
+        _image = image
+    }
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()

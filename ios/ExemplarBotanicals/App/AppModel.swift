@@ -55,6 +55,7 @@ final class AppModel {
         ledger = Store.load(NudgeLedger.self, from: Store.ledgerFile) ?? NudgeLedger()
         phrasings = Store.load([String: NudgePhrasing].self, from: Store.phrasingFile) ?? [:]
         timeZoneID = GardenRepository.existingProfile(container.mainContext)?.timeZoneID
+        GardenRepository.backfillPhotoDates(container.mainContext)
     }
 
     private static func makeContainer() -> ModelContainer {
