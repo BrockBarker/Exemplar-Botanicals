@@ -1,0 +1,24 @@
+{
+  "name": "exemplar-botanicals-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Small Cloudflare Worker that holds the API keys for the Exemplar Botanicals garden coach (chat, photo diagnosis, nudge wording, voice).",
+  "type": "module",
+  "scripts": {
+    "persona": "node scripts/build-persona.mjs",
+    "dev": "npm run persona && wrangler dev",
+    "deploy": "npm run persona && wrangler deploy",
+    "typecheck": "npm run persona && tsc --noEmit",
+    "test": "npm run persona && vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.6.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261104.1",
+    "typescript": "5.9.3",
+    "vite": "7.3.7",
+    "vitest": "5.0.5",
+    "wrangler": "4.157.0"
+  }
+}

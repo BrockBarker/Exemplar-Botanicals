@@ -1,0 +1,20 @@
+// Build settings for the app. Don't put secrets here: copy Secrets.example.xcconfig to
+// Secrets.xcconfig (which git ignores) and fill in your values there.
+
+// Your Apple Developer Team ID (Xcode > Settings > Accounts, or developer.apple.com > Membership).
+EB_DEVELOPMENT_TEAM =
+
+// A bundle id that is yours, in reverse-DNS form.
+EB_BUNDLE_ID = com.exemplarbotanicals.app
+
+// The coach backend's host name only, without https:// (the // would start a comment here),
+// e.g. exemplar-botanicals.your-subdomain.workers.dev. Leave empty for demo mode.
+EB_BACKEND_HOST =
+
+// The shared secret you set on the backend with `wrangler secret put APP_SHARED_SECRET`.
+EB_APP_SECRET =
+
+// The coach's first name, shown in the app.
+EB_COACH_NAME = David
+
+#include? "Secrets.xcconfig"
