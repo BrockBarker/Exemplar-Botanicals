@@ -22,8 +22,9 @@ STATUS line at the top.
 
 ## Feeding
 - More nitrogen is not better. Overfed plants get lush, soft growth that invites aphids and sets less fruit.
-- Use what you have first: diluted urine, compost, kitchen scraps and leaves before buying anything.
-- Urine: dilute about 1 part to 10 parts water and pour it on the soil, not the leaves. Stop using it on leafy greens and root crops about a month before harvest.
+- Most plants in decent soil need less feeding than people think. Heavy feeders (tomatoes, squash, corn, cabbage family) and fruiting crops in full production are the ones that really want it.
+- Use what you have first: compost, leaf mold, kitchen scraps and comfrey or weed tea before buying anything.
+- Diluted urine is a free nitrogen boost for a hungry heavy feeder now and then, not a routine. Dilute about 1 part to 10 parts water and pour it on the soil, not the leaves. Skip it on leafy greens and root crops within a month of harvest.
 - Wood ash adds potassium but raises pH. Skip it on alkaline soils and never mix it with fresh manure.
 - Coffee grounds are fine in compost or as a thin top-dressing; they are not a magic acidifier.
 - Eggshells release calcium very slowly. Blossom end rot is almost always uneven watering, not a lack of calcium in the soil.
@@ -38,6 +39,31 @@ STATUS line at the top.
 ## Staking and support
 - Put stakes and cages in at planting or within the first couple of weeks, before roots spread and before the plant flops.
 - Tie loosely with soft ties in a figure eight. Check ties before big wind.
+
+## Harvest
+- Pick often. Beans, cucumbers, zucchini, okra and herbs slow down or quit if you let them go too long.
+- Pick in the cool of the morning, when crops are crisp and full of water.
+- Zucchini and cucumbers go from perfect to baseball bat in two days. Check every day or two once they start.
+- Tomatoes can come in at first blush and finish on the counter. That beats losing them to squirrels or splitting after a rain.
+- Before the first frost, pick everything ripe or close to it, then decide what's worth covering.
+
+## Pests
+- A five-minute walk with a coffee every few days catches most problems while they're small. Look under the leaves.
+- Hand-pick first, then a hard spray of water, then insecticidal soap. Neem or Bt only when that isn't enough, and spray in the evening when bees aren't out.
+- A few holes in the leaves are fine. Healthy plants shrug off a little damage.
+
+## Pruning
+- Pinch tomato suckers below the first flower cluster and strip leaves that touch the soil. It's airflow and disease control, not a beauty contest.
+- Pinch basil flower buds as soon as you see them. Deadhead flowers to keep them blooming.
+
+## Sowing again
+- Sow lettuce, radishes, beans and cilantro in small batches every couple of weeks instead of all at once. A steady supply beats a glut.
+- Count back from your first fall frost before you sow. If it won't make it to harvest, plant garlic or a cover crop instead.
+
+## End of season
+- Pull finished plants, compost the healthy ones and bag anything diseased.
+- Don't leave beds bare over winter: mulch with leaves, or sow a cover crop.
+- Fall is garlic time, about a month before the ground freezes.
 
 ## Things I don't recommend
 - Any synthetic fertilizer, pesticide, herbicide or fungicide. There's always an organic route.

@@ -26,6 +26,13 @@ final class NudgeRuleTests: XCTestCase {
         XCTAssertEqual(frost.plantIDs, [tomato.id])
     }
 
+    func testFrostSaysToPickRipeFruitFirst() throws {
+        let tomato = Fixtures.plant("Big Beef", crop: "tomato", stage: .fruiting)
+        let weather = Fixtures.weather { offset, d in if offset == 1 { d.lowF = 31 } }
+        let frost = try XCTUnwrap(candidates(Fixtures.state(plants: [tomato], weather: weather), kind: .frost).first)
+        XCTAssertTrue(frost.body.hasPrefix("Pick anything ripe or close to it, then cover the Big Beef"))
+    }
+
     func testFrostIgnoresHardyPlantsAndMildNights() {
         let kale = Fixtures.plant("Lacinato", crop: "kale")
         let cold = Fixtures.weather { offset, d in if offset == 1 { d.lowF = 31 } }
@@ -173,20 +180,36 @@ final class NudgeRuleTests: XCTestCase {
 
     // MARK: Feeding
 
-    func testFirstFeed() throws {
-        let tomato = Fixtures.plant("Big Beef", crop: "tomato", plantedDaysAgo: 7)
+    func testFirstFeedIsForHeavyFeedersAFewWeeksIn() throws {
+        let tomato = Fixtures.plant("Big Beef", crop: "tomato", plantedDaysAgo: 18)
         let nudge = try XCTUnwrap(candidates(Fixtures.state(plants: [tomato], weather: Fixtures.weather()), kind: .firstFeed).first)
         XCTAssertEqual(nudge.title, "First feed for the Big Beef")
-        XCTAssertTrue(nudge.body.contains("Use diluted urine"))
+        XCTAssertTrue(nudge.body.contains("Use compost or worm castings"))
+        XCTAssertFalse(nudge.detail.lowercased().contains("urine"))
         XCTAssertEqual(nudge.fireDate, Fixtures.at(0, 7, 30))
+
+        let justPlanted = Fixtures.plant("Big Beef", crop: "tomato", plantedDaysAgo: 7)
+        XCTAssertTrue(candidates(Fixtures.state(plants: [justPlanted]), kind: .firstFeed).isEmpty)
+        let pepper = Fixtures.plant("Jalapeño", crop: "pepper", plantedDaysAgo: 18)
+        XCTAssertTrue(candidates(Fixtures.state(plants: [pepper]), kind: .firstFeed).isEmpty, "medium feeders skip it")
+    }
+
+    func testOnlyHeavyFeedersGetRoutineFeeds() {
+        let lettuce = Fixtures.plant("Butterhead", crop: "lettuce", plantedDaysAgo: 60)
+        let pepper = Fixtures.plant("Jalapeño", crop: "pepper", plantedDaysAgo: 60)
+        let beans = Fixtures.plant("Provider", crop: "bush_bean", plantedDaysAgo: 60, stage: .flowering)
+        XCTAssertTrue(candidates(Fixtures.state(plants: [lettuce, pepper, beans]), kind: .feed).isEmpty)
     }
 
     func testRoutineFeedChecksTheJournal() throws {
         let tomato = Fixtures.plant("Big Beef", crop: "tomato", plantedDaysAgo: 60)
-        let oldFeed = JournalInfo(day: Fixtures.day(-25), kind: .feeding, what: "Compost", plantName: "big beef")
+        let oldFeed = JournalInfo(day: Fixtures.day(-30), kind: .feeding, what: "Compost", plantName: "big beef")
         let due = try XCTUnwrap(candidates(Fixtures.state(plants: [tomato], journal: [oldFeed]), kind: .feed).first)
         XCTAssertEqual(due.dedupeKey, "feed")
-        XCTAssertTrue(due.body.hasPrefix("Last feed was 25 days ago."))
+        XCTAssertTrue(due.body.hasPrefix("Last feed was 30 days ago."))
+
+        let notYet = JournalInfo(day: Fixtures.day(-25), kind: .feeding, what: "Compost", plantID: tomato.id)
+        XCTAssertTrue(candidates(Fixtures.state(plants: [tomato], journal: [notYet]), kind: .feed).isEmpty, "every four weeks")
 
         let recentFeed = JournalInfo(day: Fixtures.day(-5), kind: .feeding, what: "Compost", plantID: tomato.id)
         XCTAssertTrue(candidates(Fixtures.state(plants: [tomato], journal: [recentFeed]), kind: .feed).isEmpty)
@@ -197,16 +220,20 @@ final class NudgeRuleTests: XCTestCase {
         let fed = JournalInfo(day: Fixtures.day(-15), kind: .feeding, what: "Compost", plantID: tomato.id)
         let nudge = try XCTUnwrap(candidates(Fixtures.state(plants: [tomato], journal: [fed]), kind: .feed).first)
         XCTAssertEqual(nudge.dedupeKey, "side_dress")
+
+        let pepper = Fixtures.plant("Jalapeño", crop: "pepper", plantedDaysAgo: 50, stage: .flowering)
+        let pepperFed = JournalInfo(day: Fixtures.day(-15), kind: .feeding, what: "Compost", plantID: pepper.id)
+        XCTAssertTrue(candidates(Fixtures.state(plants: [pepper], journal: [pepperFed]), kind: .feed).isEmpty, "medium feeders wait three weeks")
     }
 
-    func testLeafyCropsSkipUrineAndOwnedProductsComeFirst() throws {
-        let lettuce = Fixtures.plant("Butterhead", crop: "lettuce", plantedDaysAgo: 60)
-        let leafy = try XCTUnwrap(candidates(Fixtures.state(plants: [lettuce]), kind: .feed).first)
-        XCTAssertTrue(leafy.body.contains("Use compost or worm castings"))
-        XCTAssertFalse(leafy.detail.contains("Diluted urine ("))
+    func testFeedingNeverDefaultsToUrineAndOwnedProductsComeFirst() throws {
+        let cabbage = Fixtures.plant("Copenhagen", crop: "cabbage", plantedDaysAgo: 60)
+        let plain = try XCTUnwrap(candidates(Fixtures.state(plants: [cabbage]), kind: .feed).first)
+        XCTAssertTrue(plain.body.contains("Use compost or worm castings"))
+        XCTAssertFalse(plain.detail.lowercased().contains("urine"))
 
         let fish = InventoryInfo(name: "Alaska Fish Fertilizer", category: .fertilizer)
-        let owned = try XCTUnwrap(candidates(Fixtures.state(plants: [lettuce], inventory: [fish]), kind: .feed).first)
+        let owned = try XCTUnwrap(candidates(Fixtures.state(plants: [cabbage], inventory: [fish]), kind: .feed).first)
         XCTAssertTrue(owned.body.contains("Use your Alaska Fish Fertilizer"))
     }
 

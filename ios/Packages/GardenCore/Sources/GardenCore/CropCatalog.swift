@@ -3,12 +3,12 @@ import Foundation
 public enum FeedingNeed: String, Codable, Sendable {
     case heavy, medium, light
 
-    /// Days between routine feeds while actively growing; nil means no routine feeding nudges.
+    /// Days between routine feeds while flowering or fruiting; nil means no routine feeding
+    /// nudges. Most crops do fine on compost-rich soil, so only heavy feeders get them.
     public var feedIntervalDays: Int? {
         switch self {
-        case .heavy: return 21
-        case .medium: return 35
-        case .light: return nil
+        case .heavy: return 28
+        case .medium, .light: return nil
         }
     }
 }

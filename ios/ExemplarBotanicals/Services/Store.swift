@@ -56,7 +56,9 @@ struct LoadedGarden {
             plants: plants.map { $0.info },
             journal: journal.map { $0.info },
             inventory: inventory.map { $0.info },
-            weather: weather
+            weather: weather,
+            lastSpringFrost: profile.lastSpringFrost.flatMap { LocalDay($0) },
+            firstFallFrost: profile.firstFallFrost.flatMap { LocalDay($0) }
         )
     }
 }
@@ -101,6 +103,18 @@ enum GardenRepository {
             changed = true
         }
         if changed { try? context.save() }
+        UserDefaults.standard.set(true, forKey: key)
+    }
+
+    /// Foliar sprays used to default to every 14 days; 21 is plenty. Gardeners still on the old
+    /// default move to the new one once; anyone who picked their own interval keeps it.
+    static func relaxFoliarDefault(_ context: ModelContext) {
+        let key = "eb.migrate.foliar21.v1"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+        if let profile = existingProfile(context), profile.foliarIntervalDays == 14 {
+            profile.foliarIntervalDays = 21
+            try? context.save()
+        }
         UserDefaults.standard.set(true, forKey: key)
     }
 

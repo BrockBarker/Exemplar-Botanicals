@@ -2,75 +2,46 @@ import SwiftUI
 import SwiftData
 import GardenCore
 
-/// Beds, plants and what's in the shed.
+/// The garden at a glance: one row per bed. Everything about a bed (its plants, photos and
+/// history) lives on the bed's own screen.
 struct GardenView: View {
     @Environment(AppModel.self) private var app
-    @Environment(\.modelContext) private var context
     @Query(sort: \Bed.created) private var beds: [Bed]
     @Query(sort: \Plant.created) private var plants: [Plant]
     @Query(sort: \InventoryItem.created) private var inventory: [InventoryItem]
 
-    @State private var editingBed: Bed?
     @State private var addingBed = false
-    @State private var addingPlantToBed: Bed?
-    @State private var addingLoosePlant = false
     @State private var showSettings = false
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(beds) { bed in
-                    Section {
+                let loose = plants.filter { plant in plant.bedID == nil || !beds.contains { $0.id == plant.bedID } }
+                Section {
+                    ForEach(beds) { bed in
                         NavigationLink {
                             GardenRecordView(subject: .bed(bed.id))
                         } label: {
-                            Label("Bed record and photos", systemImage: "photo.on.rectangle.angled")
-                                .foregroundStyle(.tint)
+                            BedRow(bed: bed, plants: plants.filter { $0.bedID == bed.id })
                         }
-                        ForEach(plants.filter { $0.bedID == bed.id }) { plant in
-                            NavigationLink {
-                                GardenRecordView(subject: .plant(plant.id))
-                            } label: {
-                                PlantRow(plant: plant)
-                            }
-                        }
-                        .onDelete { offsets in delete(offsets, from: plants.filter { $0.bedID == bed.id }) }
-                        Button {
-                            addingPlantToBed = bed
+                    }
+                    if !loose.isEmpty {
+                        NavigationLink {
+                            UnassignedPlantsView()
                         } label: {
-                            Label("Add a plant", systemImage: "plus")
+                            LooseRow(count: loose.reduce(0) { $0 + $1.count })
                         }
-                    } header: {
-                        BedHeader(bed: bed, onEdit: { editingBed = bed })
                     }
-                }
-
-                let loose = plants.filter { plant in plant.bedID == nil || !beds.contains { $0.id == plant.bedID } }
-                if !loose.isEmpty {
-                    Section("Not in a bed") {
-                        ForEach(loose) { plant in
-                            NavigationLink {
-                                GardenRecordView(subject: .plant(plant.id))
-                            } label: {
-                                PlantRow(plant: plant)
-                            }
-                        }
-                        .onDelete { offsets in delete(offsets, from: loose) }
-                    }
-                }
-
-                Section {
                     Button {
                         addingBed = true
                     } label: {
-                        Label("Add a bed or container", systemImage: "square.grid.2x2")
+                        Label("Add a bed or container", systemImage: "plus")
                     }
+                } header: {
+                    Text("Beds")
+                } footer: {
                     if beds.isEmpty {
-                        Button {
-                            addingLoosePlant = true
-                        } label: {
-                            Label("Add a plant", systemImage: "leaf")
-                        }
+                        Text("Add each bed, row or container, then open it to add what's growing there.")
                     }
                 }
 
@@ -105,61 +76,114 @@ struct GardenView: View {
                     .accessibilityLabel("Settings")
                 }
             }
-            .sheet(item: $editingBed) { bed in
-                BedEditor(bed: bed)
-            }
             .sheet(isPresented: $addingBed) {
                 BedEditor(bed: nil)
-            }
-            .sheet(item: $addingPlantToBed) { bed in
-                PlantEditor(plant: nil, defaultBedID: bed.id)
-            }
-            .sheet(isPresented: $addingLoosePlant) {
-                PlantEditor(plant: nil, defaultBedID: nil)
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView()
             }
         }
     }
-
-    private func delete(_ offsets: IndexSet, from list: [Plant]) {
-        for index in offsets where index < list.count {
-            context.delete(list[index])
-        }
-        app.save()
-        Task { await app.replanNudges() }
-    }
 }
 
-struct BedHeader: View {
+/// One bed in the Garden list: its name, kind and how many plants are in it.
+struct BedRow: View {
     let bed: Bed
-    var onEdit: () -> Void
+    let plants: [Plant]
 
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
+            Image(systemName: bed.kind == .container ? "cube.box.fill" : "square.grid.2x2.fill")
+                .foregroundStyle(.tint)
+                .frame(width: 24)
             VStack(alignment: .leading, spacing: 2) {
                 Text(bed.name)
                     .font(.headline)
-                    .foregroundStyle(.primary)
-                    .textCase(nil)
                 Text(summary)
                     .font(.caption)
-                    .textCase(nil)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
-            Spacer()
-            Button("Edit", action: onEdit)
-                .font(.caption)
-                .textCase(nil)
         }
+        .padding(.vertical, 2)
     }
 
     private var summary: String {
-        var parts = [bed.kind.displayName, bed.soil == .unknown ? "soil not set" : bed.soil.displayName.lowercased()]
-        parts.append(bed.sun.displayName.components(separatedBy: " (").first?.lowercased() ?? "")
-        if !bed.mulch.isEmpty { parts.append("\(bed.mulch.lowercased()) mulch") }
-        return parts.filter { !$0.isEmpty }.joined(separator: " · ")
+        let count = plants.reduce(0) { $0 + $1.count }
+        let what = count == 0 ? "No plants yet" : (count == 1 ? "1 plant" : "\(count) plants")
+        return "\(bed.kind.displayName) · \(what)"
     }
+}
+
+private struct LooseRow: View {
+    let count: Int
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "leaf")
+                .foregroundStyle(.secondary)
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Not in a bed")
+                    .font(.headline)
+                Text(count == 1 ? "1 plant" : "\(count) plants")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.vertical, 2)
+    }
+}
+
+/// Plants that aren't in any bed (added without one, or left over from a deleted bed).
+struct UnassignedPlantsView: View {
+    @Environment(AppModel.self) private var app
+    @Environment(\.modelContext) private var context
+    @Query(sort: \Bed.created) private var beds: [Bed]
+    @Query(sort: \Plant.created) private var plants: [Plant]
+    @State private var adding = false
+
+    init() {}
+
+    private var loose: [Plant] {
+        plants.filter { plant in plant.bedID == nil || !beds.contains { $0.id == plant.bedID } }
+    }
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(loose) { plant in
+                    NavigationLink {
+                        GardenRecordView(subject: .plant(plant.id))
+                    } label: {
+                        PlantRow(plant: plant)
+                    }
+                }
+                .onDelete { offsets in deletePlants(offsets, from: loose, context: context, app: app) }
+                Button {
+                    adding = true
+                } label: {
+                    Label("Add a plant", systemImage: "plus")
+                }
+            } footer: {
+                Text("To move a plant into a bed, open it and tap Edit.")
+            }
+        }
+        .navigationTitle("Not in a bed")
+        .sheet(isPresented: $adding) {
+            PlantEditor(plant: nil, defaultBedID: nil)
+        }
+    }
+}
+
+/// Swipe-to-delete for a list of plants.
+@MainActor
+func deletePlants(_ offsets: IndexSet, from list: [Plant], context: ModelContext, app: AppModel) {
+    for index in offsets where index < list.count {
+        context.delete(list[index])
+    }
+    app.save()
+    Task { await app.replanNudges() }
 }
 
 struct PlantRow: View {

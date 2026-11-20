@@ -32,7 +32,7 @@ final class GardenProfile {
     var quietStartMinute: Int = 21 * 60
     var quietEndMinute: Int = 7 * 60
     var deliveryMinute: Int = 7 * 60 + 30
-    var foliarIntervalDays: Int = 14
+    var foliarIntervalDays: Int = 21
 
     var created: Date = Date()
 

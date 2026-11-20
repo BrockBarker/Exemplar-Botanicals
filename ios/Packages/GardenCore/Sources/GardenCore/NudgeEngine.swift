@@ -42,14 +42,19 @@ public struct NudgeEngine {
         out += staking(state, today: today)
         out += foliar(state, today: today, now: now)
         out += feeding(state, today: today)
+        out += harvest(state, today: today)
+        out += pestCheck(state, today: today)
+        out += pruning(state, today: today)
+        out += succession(state, today: today)
+        out += seasonEnd(state, today: today)
         return out
     }
 
-    private func at(_ day: LocalDay, _ minute: Int) -> Date {
+    func at(_ day: LocalDay, _ minute: Int) -> Date {
         day.date(atMinute: minute, in: calendar)
     }
 
-    private func forecastDay(_ state: GardenState, _ day: LocalDay) -> DailyWeather? {
+    func forecastDay(_ state: GardenState, _ day: LocalDay) -> DailyWeather? {
         state.weather?.day(day)
     }
 
@@ -65,6 +70,8 @@ public struct NudgeEngine {
             let names = NudgeText.list(tender.map { $0.name })
             let cover = Toolbox.ranked(for: .frostCover, inventory: state.inventory)
             let first = cover.first
+            let bearing = tender.contains { $0.stage == .fruiting || $0.stage == .mature }
+            let pickFirst = bearing ? "Pick anything ripe or close to it, then cover" : "Cover"
             return [Nudge(
                 kind: .frost,
                 dedupeKey: "frost:\(day.string)",
@@ -73,7 +80,7 @@ public struct NudgeEngine {
                 fireDate: at(eve, 16 * 60),
                 expires: at(eve, 22 * 60),
                 title: "Frost likely \(when) (\(NudgeText.temp(low)))",
-                body: "Cover the \(names) before dark, all the way to the ground. Water the soil this afternoon; moist soil holds heat.",
+                body: "\(pickFirst) the \(names) before dark, all the way to the ground. Water the soil this afternoon; moist soil holds heat.",
                 detail: NudgeText.optionsDetail(
                     intro: "The forecast low is \(NudgeText.temp(low)), cold enough to damage the \(names).",
                     options: cover,
@@ -330,7 +337,7 @@ public struct NudgeEngine {
             kind: .foliar,
             dedupeKey: "foliar",
             cooldownDays: 3,
-            priority: 40,
+            priority: 25,
             fireDate: fire,
             expires: window.end,
             title: "Foliar window \(dayName) \(NudgeText.hourRange(window.start, window.end, calendar: calendar))",
@@ -390,14 +397,16 @@ public struct NudgeEngine {
             let lastFeed = feeds.map { $0.day }.max()
             let daysSincePlanting = plant.plantedOn?.days(to: today, calendar: calendar)
 
-            if let planted = plant.plantedOn, let d = daysSincePlanting, d >= 3, d <= 28, crop.feeding != .light {
+            // Only heavy feeders get a first feed, a few weeks in once the planting-hole compost is used up.
+            if let planted = plant.plantedOn, let d = daysSincePlanting, d >= 14, d <= 35, crop.feeding == .heavy {
                 let fedSince = feeds.contains { $0.day >= planted.adding(days: -7, calendar: calendar) }
                 if !fedSince { firstFeed.append(plant); continue }
             }
 
             var interval = crop.feeding.feedIntervalDays
-            let flowering = crop.fruiting && plant.stage == .flowering
-            if flowering { interval = min(interval ?? 14, 14) }
+            // Fruiting crops get a side-dressing when they flower; light feeders (beans, peas) don't need it.
+            let flowering = crop.fruiting && plant.stage == .flowering && crop.feeding != .light
+            if flowering { interval = crop.feeding == .heavy ? 14 : 21 }
             guard let every = interval, plant.stage != .seedling else { continue }
             guard let reference = lastFeed ?? plant.plantedOn else { continue }
             let since = reference.days(to: today, calendar: calendar)
@@ -421,8 +430,7 @@ public struct NudgeEngine {
 
         var out: [Nudge] = []
         func make(_ kind: NudgeKind, _ plants: [PlantInfo], key: String, priority: Int, title: String, lead: String) {
-            let avoidUrine = plants.contains { $0.crop.leafyOrRoot }
-            let options = Toolbox.ranked(for: .feed, inventory: state.inventory, avoidUrine: avoidUrine)
+            let options = Toolbox.ranked(for: .feed, inventory: state.inventory)
             guard let pick = options.first else { return }
             let use = pick.tier == .owned ? "your \(pick.name)" : pick.name.lowercased()
             let body = "\(lead) Use \(use): \(NudgeText.lowerFirst(pick.howTo))\(heatNote)"
@@ -435,9 +443,9 @@ public struct NudgeEngine {
                 title: title,
                 body: body,
                 detail: NudgeText.optionsDetail(
-                    intro: "Feeding on schedule keeps growth steady without overdoing nitrogen (lush, soft growth invites aphids and sets less fruit). The app checks your journal so it won't nag about plants you've fed recently.",
+                    intro: "Heavy feeders and fruiting crops use up soil nitrogen as they grow; a side-dressing now and then keeps them steady. More than that gives lush, soft growth that invites aphids and sets less fruit. The app checks your journal so it won't nag about plants you've fed recently.",
                     options: options,
-                    outro: avoidUrine ? "Urine is left off this list because these are leafy or root crops; keep it at least a month away from harvest." : ""
+                    outro: ""
                 ),
                 plantIDs: plants.map { $0.id },
                 log: SuggestedLog(kind: .feeding, what: pick.name, plantIDs: plants.map { $0.id })

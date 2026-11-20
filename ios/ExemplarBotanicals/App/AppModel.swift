@@ -56,6 +56,7 @@ final class AppModel {
         phrasings = Store.load([String: NudgePhrasing].self, from: Store.phrasingFile) ?? [:]
         timeZoneID = GardenRepository.existingProfile(container.mainContext)?.timeZoneID
         GardenRepository.backfillPhotoDates(container.mainContext)
+        GardenRepository.relaxFoliarDefault(container.mainContext)
     }
 
     private static func makeContainer() -> ModelContainer {

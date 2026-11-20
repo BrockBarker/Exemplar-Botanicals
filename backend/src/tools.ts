@@ -32,7 +32,7 @@ export const COACH_TOOLS: Tool[] = [
   {
     name: "log_journal_entry",
     description:
-      "Save an entry in the garden journal. Call this whenever the gardener says they did something in the garden (watered, fed, foliar sprayed, mulched, staked, planted, transplanted, pruned, harvested, amended soil, checked soil moisture) or reports a notable observation, even in passing. Do not call it for plans or for advice you are giving.",
+      "Save an entry in the garden journal. Call this whenever the gardener says they did something in the garden (watered, fed, foliar sprayed, mulched, staked, planted, transplanted, pruned, harvested, checked for pests or treated them, amended soil, checked soil moisture) or reports a notable observation, even in passing. Do not call it for plans or for advice you are giving.",
     input_schema: {
       type: "object",
       properties: {

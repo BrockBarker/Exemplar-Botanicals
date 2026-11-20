@@ -14,38 +14,156 @@ public enum DemoCoach {
     ) -> String {
         let q = question.lowercased()
         let today = LocalDay(now, calendar: calendar)
+        func asks(_ words: String...) -> Bool { words.contains { q.contains($0) } }
         let body: String
 
-        if q.contains("frost") || q.contains("freeze") || q.contains("cold") {
+        if asks("frost", "freeze", "cold snap") {
             body = frostAnswer(state, today: today, calendar: calendar)
-        } else if q.contains("foliar") || q.contains("spray") || q.contains("kelp") {
+        } else if asks("harvest", "ripe", "ready", "pick") {
+            body = harvestAnswer(state, today: today, calendar: calendar)
+        } else if asks("bug", "pest", "aphid", "beetle", "hornworm", "cabbage worm", "caterpillar", "holes in", "eating my", "slug", "mites") {
+            body = pestAnswer(state)
+        } else if asks("prune", "pruning", "sucker", "pinch", "deadhead", "trim") {
+            body = pruneAnswer(state)
+        } else if asks("sow", "succession", "plant more", "plant next", "what can i plant", "what should i plant") {
+            body = sowAnswer(state)
+        } else if asks("yellow") {
+            body = yellowAnswer
+        } else if asks("urine", "pee") {
+            body = urineAnswer(state, profile: profile)
+        } else if asks("foliar", "spray", "kelp") {
             body = optionsAnswer(
-                lead: "For a foliar feed, spray early morning or evening when it's under about 85°F, calm, and no rain is due for a few hours. Coat the leaf undersides until just dripping.",
-                need: .foliar, state: state, profile: profile
+                lead: "For a foliar spray, go early morning or evening when it's under about 85°F, calm, and no rain is due for a few hours. Coat the leaf undersides until just dripping. Every couple of weeks during active growth is plenty.",
+                need: .foliar, state: state
             )
-        } else if q.contains("feed") || q.contains("fertiliz") || q.contains("nitrogen") || q.contains("yellow") {
+        } else if asks("feed", "fertiliz", "nitrogen", "compost") {
             body = optionsAnswer(
-                lead: "Feed the soil and the soil feeds the plant. Here's what I'd reach for, starting with what you have:",
-                need: .feed, state: state, profile: profile
+                lead: "Only feed what will use it: heavy feeders like tomatoes, squash and corn once they start flowering, and anything pale and slow-growing. Most crops do fine on compost-rich soil. If something needs a boost, here's what I'd reach for, starting with what you have:",
+                need: .feed, state: state
             )
-        } else if q.contains("mulch") {
+        } else if asks("mulch") {
             body = optionsAnswer(
                 lead: "Mulch keeps roots cool and cuts watering a lot. Keep it an inch or two off the stems.",
-                need: .mulch, state: state, profile: profile
+                need: .mulch, state: state
             )
-        } else if q.contains("water") || q.contains("dry") || q.contains("wilt") {
+        } else if asks("water", "dry", "wilt") {
             body = waterAnswer(state, today: today, calendar: calendar)
-        } else if q.contains("stake") || q.contains("cage") || q.contains("trellis") {
+        } else if asks("stake", "cage", "trellis") {
             body = "Get supports in early, within a couple of weeks of planting, so you don't tear roots later. Set stakes 3 to 4 inches from the stem and tie loosely in a figure eight with soft ties or strips of old T-shirt."
         } else {
-            body = "Ask me about watering, feeding, foliar sprays, mulch, staking or frost and I'll answer from what the app knows about your garden. For a full conversation, connect the live coach (Settings explains how)."
+            body = overviewAnswer(state, now: now, calendar: calendar)
         }
         return "\(body)\n\n\(notice)"
     }
 
-    static func optionsAnswer(lead: String, need: GardenNeed, state: GardenState, profile: GardenProfileInfo) -> String {
+    /// "What should I be doing?": the most useful things this week, across the whole garden.
+    static func overviewAnswer(_ state: GardenState, now: Date, calendar: Calendar) -> String {
+        guard !state.plants.isEmpty else {
+            return "Add your beds and plants in the Garden tab and I'll keep track of what needs doing as the season goes: watering, harvests, pest checks, pruning, sowing and frost."
+        }
+        var kinds: Set<NudgeKind> = []
+        let top = NudgeEngine(settings: .standard, calendar: calendar)
+            .candidates(state, now: now)
+            .sorted { $0.priority > $1.priority }
+            .filter { kinds.insert($0.kind).inserted }
+            .prefix(4)
+        guard !top.isEmpty else {
+            return "Nothing pressing this week. It's a good time to walk the garden, pull a few weeds while they're small, and take a progress photo of each bed."
+        }
+        let lines = top.enumerated().map { "\($0.offset + 1). \($0.element.title). \($0.element.body)" }
+        return (["Here's what I'd do this week:"] + lines).joined(separator: "\n")
+    }
+
+    static func harvestAnswer(_ state: GardenState, today: LocalDay, calendar: Calendar) -> String {
+        guard !state.plants.isEmpty else {
+            return "Add your plants with their planting dates in the Garden tab and I'll tell you when each one should be ready and how to tell."
+        }
+        var lines: [String] = []
+        for plant in state.plants where plant.stage != .seed && plant.stage != .dormant {
+            let care = plant.crop.care
+            if plant.stage == .mature || (plant.stage == .fruiting && care.pickEveryDays != nil) {
+                lines.append("\(plant.name): pick when \(care.readyWhen).")
+            } else if let start = care.firstHarvestDays, let planted = plant.plantedOn {
+                let left = start - planted.days(to: today, calendar: calendar)
+                if left <= 0 {
+                    lines.append("\(plant.name): should be ready about now. It's ready when \(care.readyWhen).")
+                } else {
+                    lines.append("\(plant.name): about \(left) days to go (usually around day \(start)).")
+                }
+            } else if care.firstHarvestDays != nil {
+                lines.append("\(plant.name): add its planting date and I can estimate it. It's ready when \(care.readyWhen).")
+            }
+        }
+        guard !lines.isEmpty else {
+            return "Nothing's close to harvest yet. I'll remind you as each crop gets near."
+        }
+        return (["Here's where your harvests stand:"] + lines + ["Pick in the cool of the morning, and log harvests so I know when to remind you again."])
+            .joined(separator: "\n")
+    }
+
+    static func pestAnswer(_ state: GardenState) -> String {
+        var seen: Set<String> = []
+        let watch = state.plants
+            .filter { $0.crop.care.watchFor != nil && seen.insert($0.crop.id).inserted }
+            .map { "\($0.name): \($0.crop.care.watchFor ?? "")." }
+        let options = Toolbox.ranked(for: .pests, inventory: state.inventory).prefix(4).enumerated().map { i, o -> String in
+            var line = "\(i + 1). \(o.name) (\(o.tier.displayName.lowercased())): \(o.howTo)"
+            if !o.price.isEmpty { line += " About \(o.price.replacingOccurrences(of: "about ", with: ""))." }
+            return line
+        }
+        var parts: [String] = []
+        if !watch.isEmpty { parts.append((["What to look for on your plants:"] + watch).joined(separator: "\n")) }
+        parts.append((["If you find some, start gentle:"] + options).joined(separator: "\n"))
+        parts.append("Spray only in the evening when bees aren't out, and only the plants that need it. A photo in the Photo check tab helps if you're not sure what you're seeing.")
+        return parts.joined(separator: "\n\n")
+    }
+
+    static func pruneAnswer(_ state: GardenState) -> String {
+        var seen: Set<String> = []
+        let lines = state.plants
+            .filter { $0.crop.care.prune != nil && seen.insert($0.crop.id).inserted }
+            .map { "\($0.name): \($0.crop.care.prune ?? "")" }
+        let general = "Most vegetables need little pruning. Take off yellowing or diseased leaves, keep leaves off the soil, and use clean snips on a dry day."
+        guard !lines.isEmpty else { return general }
+        return (["Here's the pruning worth doing in your garden:"] + lines + [general]).joined(separator: "\n")
+    }
+
+    static func sowAnswer(_ state: GardenState) -> String {
+        var seen: Set<String> = []
+        let lines = state.plants
+            .filter { $0.crop.care.sowAgainDays != nil && seen.insert($0.crop.id).inserted }
+            .map { plant -> String in
+                let care = plant.crop.care
+                var text = "\(plant.crop.name): a short row every \(care.sowAgainDays ?? 14) days"
+                if let days = care.firstHarvestDays { text += ", ready in about \(days) days" }
+                return text + "."
+            }
+        let general = "Quick crops like lettuce, radishes, bush beans, cilantro and basil do best sown a little at a time, so you get a steady supply instead of a glut. Lettuce and spinach like it cool; beans and basil like it warm."
+        guard !lines.isEmpty else { return general }
+        return (["Sow a little at a time:"] + lines + [general]).joined(separator: "\n")
+    }
+
+    static let yellowAnswer = """
+        Yellow leaves have a few usual causes, and feeding isn't always the fix:
+        1. The oldest leaves yellow first, evenly: often nitrogen running low, or just old leaves being shed late in the season. If the whole plant is pale and slow, side-dress with compost.
+        2. Yellow between the veins on new growth: usually a pH problem locking out iron. A soil test sorts it out.
+        3. Yellow and droopy with soggy soil: too much water. Let it dry out 2 inches down before watering again.
+        4. Yellow with brown spots or rings: likely a leaf disease such as early blight. Pick off the affected leaves and keep water off the foliage.
+        A photo in the Photo check tab helps tell them apart.
+        """
+
+    static func urineAnswer(_ state: GardenState, profile: GardenProfileInfo) -> String {
+        if profile.avoidUrine {
+            return "You've asked me to leave urine out, so I will. Compost or worm castings, side-dressed about an inch deep, does the same job more gently."
+        }
         let leafy = state.plants.contains { $0.crop.leafyOrRoot }
-        let options = Toolbox.ranked(for: need, inventory: state.inventory, avoidUrine: profile.avoidUrine || (need == .feed && leafy))
+        var text = "Diluted urine is a free, fast nitrogen source: about 1 part to 10 parts water, a quart around the base of a plant, on the soil and never the leaves. It suits hungry crops like tomatoes, squash and corn once they're growing hard; it's no help to beans and peas, which make their own nitrogen. Use it now and then, not every week."
+        if leafy { text += " Keep it off leafy greens and root crops for the last month before harvest." }
+        return text
+    }
+
+    static func optionsAnswer(lead: String, need: GardenNeed, state: GardenState) -> String {
+        let options = Toolbox.ranked(for: need, inventory: state.inventory)
         let lines = options.prefix(3).enumerated().map { i, o -> String in
             var line = "\(i + 1). \(o.name) (\(o.tier.displayName.lowercased())): \(o.howTo)"
             if !o.price.isEmpty { line += " About \(o.price.replacingOccurrences(of: "about ", with: ""))." }
@@ -101,8 +219,8 @@ public enum DemoCoach {
                       likelihood: FindingLikelihood.unlikely.rawValue, evidence: "Alternatives are listed with how likely each one is."),
             ],
             fixes: [
-                .init(tier: Tier.free.rawValue, title: "Diluted urine", how: "1 part to 10 parts water, about a quart at the base of each plant."),
                 .init(tier: Tier.free.rawValue, title: "Compost side-dressing", how: "An inch around the plant, scratched in and watered."),
+                .init(tier: Tier.free.rawValue, title: "Comfrey or weed tea", how: "Steeped 2 to 3 weeks, diluted about 1 to 10, poured on the soil."),
                 .init(tier: Tier.branded.rawValue, title: "Fish emulsion", how: "1 tablespoon per gallon, watered in at the base.",
                       product: "Alaska Fish Fertilizer 5-1-1", price: "about $12 to $20 per quart",
                       pros: "Fast-acting and gentle.", cons: "Smells for a day."),

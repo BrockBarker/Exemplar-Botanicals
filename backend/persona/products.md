@@ -119,3 +119,29 @@ Prices are rough typical US retail ranges for home-garden sizes. Always say pric
 - Pros: cheap, at any grocery store.
 - Cons: modest effect; too much can attract ants.
 - Price: about $5 to $8 per bottle.
+
+## Pest control (organic, gentlest first)
+
+### Insecticidal soap (e.g. Safer Brand)
+- Use: aphids, whiteflies, mites and other soft-bodied pests; spray them directly in the evening.
+- Pros: cheap, gentle, breaks down fast, safe to harvest soon after.
+- Cons: works only on contact, so you have to hit the bugs and repeat; can spot sensitive leaves in sun or heat.
+- Price: about $8 to $12 per ready-to-use bottle.
+
+### Bt, Bacillus thuringiensis (e.g. Monterey B.t., Bonide Thuricide)
+- Use: caterpillars only (hornworms, cabbage worms, corn earworms); spray the leaves they're eating, in the evening.
+- Pros: targets caterpillars and leaves bees, ladybugs and people alone.
+- Cons: breaks down in sunlight within a few days; the caterpillars have to eat it, so coverage matters.
+- Price: about $12 to $20 for a concentrate.
+
+### Neem oil (e.g. Garden Safe, Bonide)
+- Use: a broader organic spray for aphids, beetles, mites and some leaf diseases like powdery mildew.
+- Pros: works several ways (repels, disrupts feeding and growth); also helps with mildew.
+- Cons: can harm bees if sprayed on them, so only at dusk and never on open flowers; can burn leaves above about 90°F; strong smell.
+- Price: about $10 to $18.
+
+### Floating row cover (e.g. Agribon AG-19)
+- Use: keep flea beetles, cabbage worms and squash pests off young plants; doubles as light frost cover.
+- Pros: stops pests before they start, no spraying at all.
+- Cons: take it off squash and cucumbers when they flower so bees can pollinate.
+- Price: about $15 to $30 for a 10 by 25 foot roll.
