@@ -43,7 +43,7 @@ Where each one goes is in [SETUP.md](SETUP.md).
 
 ## 5. Things worth a quick look
 
-- **Defaults chosen for v1:** at most 2 nudges a day, quiet from 9 PM to 7 AM, routine nudges at 7:30 AM, foliar spray every 14 days. Photo checks show how confident they are and suggest a soil test when unsure. The coach politely holds the organic line if asked about synthetic products. All of these can be changed in the app's Settings except the organic line, which lives in the persona and backend instructions.
-- **App name on the home screen:** "Exemplar". Change `CFBundleDisplayName` in `ios/ExemplarBotanicals/Info.plist` if you'd like something else.
+- **Defaults chosen for v1:** at most 2 nudges a day, quiet from 9 PM to 7 AM, routine nudges at 7:30 AM, foliar spray every 21 days. Photo checks show how confident they are and suggest a soil test when unsure. The coach politely holds the organic line if asked about synthetic products. All of these can be changed in the app's Settings except the organic line, which lives in the persona and backend instructions.
+- **App name on the home screen:** "Exemplary Botanicals" (the home screen may shorten a long name under the icon). Change `CFBundleDisplayName` in `ios/ExemplarBotanicals/Info.plist` if you'd like something else.
 - **App icon:** a simple green leaf placeholder in `ios/ExemplarBotanicals/Resources/Assets.xcassets/AppIcon.appiconset/`. Swap in a 1024 × 1024 PNG with no transparency if you want your own.
 - **Coach name:** "David", set by `EB_COACH_NAME` in `ios/Config/App.xcconfig`.

@@ -1,4 +1,4 @@
-# Setting up Exemplar Botanicals
+# Setting up Exemplary Botanicals
 
 There are four stages. Each one works on its own, so you can stop after any of them.
 
@@ -171,6 +171,6 @@ Replace `ios/ExemplarBotanicals/Resources/Assets.xcassets/CoachAvatar.imageset/C
 | Coach tab says demo mode | `EB_BACKEND_HOST` and `EB_APP_SECRET` are still example values, or empty. The app treats a host containing `your-` or a secret starting with `paste-` as not set. |
 | Settings → Coach: "Server is up but missing its Claude key" | Run `npx wrangler secret put ANTHROPIC_API_KEY`. |
 | Coach says "The app's key for the coach doesn't match the server" | `EB_APP_SECRET` doesn't match `APP_SHARED_SECRET`. Set the secret again on the backend or fix the xcconfig, then rebuild. |
-| No notifications | Settings → Nudges is off, or iPhone Settings → Notifications → Exemplar is off. Weather-based nudges (watering, frost, heat, spray timing) also need a location in Settings → Location. |
+| No notifications | Settings → Nudges is off, or iPhone Settings → Notifications → Exemplary Botanicals is off. Weather-based nudges (watering, frost, heat, spray timing) also need a location in Settings → Location. |
 | "Hear David" button never appears | Both ElevenLabs secrets must be set. Check `/v1/health` shows `"voiceAvailable":true`. |
 | Build error about signing | `EB_DEVELOPMENT_TEAM` is empty or wrong, or the bundle id is taken. Use one that's unique to you. |
