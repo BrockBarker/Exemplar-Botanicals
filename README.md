@@ -1,4 +1,4 @@
-# Exemplar Botanicals
+# Exemplary Botanicals
 
 An iPhone app that acts as a personal organic gardening coach, modeled on David. It remembers your garden, watches your local weather, and nudges you at the right moment.
 
