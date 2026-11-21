@@ -38,10 +38,10 @@ struct GardenView: View {
                         Label("Add a bed or container", systemImage: "plus")
                     }
                 } header: {
-                    Text("Beds")
+                    Text("Beds").onPhoto()
                 } footer: {
                     if beds.isEmpty {
-                        Text("Add each bed, row or container, then open it to add what's growing there.")
+                        Text("Add each bed, row or container, then open it to add what's growing there.").onPhoto()
                     }
                 }
 
@@ -62,7 +62,7 @@ struct GardenView: View {
                         Label("Things \(app.coachName) remembers", systemImage: "brain")
                     }
                 } footer: {
-                    Text("Suggestions start with what you have, then free options, then low-cost ones, then products to buy.")
+                    Text("Suggestions start with what you have, then free options, then low-cost ones, then products to buy.").onPhoto()
                 }
             }
             .gardenBackground()
@@ -167,7 +167,7 @@ struct UnassignedPlantsView: View {
                     Label("Add a plant", systemImage: "plus")
                 }
             } footer: {
-                Text("To move a plant into a bed, open it and tap Edit.")
+                Text("To move a plant into a bed, open it and tap Edit.").onPhoto()
             }
         }
         .gardenBackground()

@@ -23,7 +23,7 @@ struct InventoryView: View {
                 Button("Add", action: add)
                     .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
             } footer: {
-                Text("Include free things too: a compost pile, a leaf pile, coffee grounds from a café, a rain barrel.")
+                Text("Include free things too: a compost pile, a leaf pile, coffee grounds from a café, a rain barrel.").onPhoto()
             }
 
             ForEach(InventoryCategory.allCases) { category in
@@ -74,7 +74,7 @@ struct CoachNotesView: View {
                 TextField("Add something to remember", text: $newFact)
                     .onSubmit(add)
             } footer: {
-                Text("\(app.coachName) saves things like this when you mention them in a chat, and uses them in every answer.")
+                Text("\(app.coachName) saves things like this when you mention them in a chat, and uses them in every answer.").onPhoto()
             }
             Section {
                 ForEach(notes) { note in

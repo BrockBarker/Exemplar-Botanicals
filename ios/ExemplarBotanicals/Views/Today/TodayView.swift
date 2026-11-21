@@ -65,6 +65,9 @@ struct TodayView: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var greetingText: String {
@@ -90,6 +93,7 @@ struct TodayView: View {
         if !inbox.isEmpty {
             Text("For you")
                 .font(.title3.bold())
+                .onPhoto()
             ForEach(inbox) { nudge in
                 NudgeCard(nudge: nudge, onOpen: { detailNudge = nudge })
             }
@@ -97,6 +101,7 @@ struct TodayView: View {
         if !upcoming.isEmpty {
             Text("Coming up")
                 .font(.title3.bold())
+                .onPhoto()
             Card {
                 ForEach(upcoming) { nudge in
                     Button {
@@ -143,6 +148,7 @@ struct TodayView: View {
         } else {
             Text("Soil moisture")
                 .font(.title3.bold())
+                .onPhoto()
             Card {
                 Text("Estimated from rain, evaporation and your watering log. Your finger test always wins.")
                     .font(.caption)

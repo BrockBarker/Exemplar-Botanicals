@@ -177,7 +177,7 @@ struct GardenRecordView: View {
                     .buttonStyle(.bordered)
                 }
             } header: {
-                if bed != nil { Text("About this bed") }
+                if bed != nil { Text("About this bed").onPhoto() }
             }
             photosSection(data)
             treatmentsSection(data)
@@ -255,10 +255,10 @@ struct GardenRecordView: View {
                 Label("Add a plant", systemImage: "plus")
             }
         } header: {
-            Text(total == 0 ? "Plants" : "Plants (\(total))")
+            Text(total == 0 ? "Plants" : "Plants (\(total))").onPhoto()
         } footer: {
             if here.isEmpty {
-                Text("Add what's growing here: the type and how many. Each plant gets its own record and photos too.")
+                Text("Add what's growing here: the type and how many. Each plant gets its own record and photos too.").onPhoto()
             }
         }
     }
@@ -288,7 +288,7 @@ struct GardenRecordView: View {
                 }
             }
         } header: {
-            Text(data.photos.isEmpty ? "Photos" : "Photos (\(data.photos.count))")
+            Text(data.photos.isEmpty ? "Photos" : "Photos (\(data.photos.count))").onPhoto()
         }
     }
 
@@ -330,7 +330,7 @@ struct GardenRecordView: View {
                 }
             }
         } header: {
-            Text("Treatments and results")
+            Text("Treatments and results").onPhoto()
         }
     }
 
@@ -351,7 +351,7 @@ struct GardenRecordView: View {
                 }
             }
         } header: {
-            Text("History")
+            Text("History").onPhoto()
         }
     }
 

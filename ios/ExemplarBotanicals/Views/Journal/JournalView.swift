@@ -37,7 +37,7 @@ struct JournalView: View {
                     )
                 }
                 ForEach(days) { group in
-                    Section(header: Text(header(for: group.day))) {
+                    Section(header: Text(header(for: group.day)).onPhoto()) {
                         ForEach(group.entries) { entry in
                             JournalRow(entry: entry)
                                 .contentShape(Rectangle())

@@ -166,7 +166,7 @@ Replace `ios/ExemplarBotanicals/Resources/Assets.xcassets/CoachAvatar.imageset/C
 
 ## Changing the background photo
 
-The photo behind the main screens is `ios/ExemplarBotanicals/Resources/Assets.xcassets/GardenBackground.imageset/GardenBackground.jpg`. Replace it with any photo (a JPEG about 1200 pixels on the long side keeps the app small), keeping the file name, and rebuild. The app softens and lightens it automatically so text stays readable; `GardenBackdrop` in `Views/Shared/Components.swift` sets how much (`blur` radius and overlay opacity).
+The photo behind the main screens is `ios/ExemplarBotanicals/Resources/Assets.xcassets/GardenBackground.imageset/GardenBackground.jpg`. Replace it with any photo (a JPEG about 1200 pixels on the long side keeps the app small), keeping the file name, and rebuild. It shows full color; cards and lists sit on solid backgrounds and headings get a frosted backing so text stays readable. To soften the photo instead, raise `blurRadius` and `washOpacity` in `GardenBackdrop` (`Views/Shared/Components.swift`); 6 and 0.72 give a soft, light look.
 
 ## Troubleshooting
 
