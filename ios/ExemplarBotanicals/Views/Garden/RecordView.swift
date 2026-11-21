@@ -183,6 +183,7 @@ struct GardenRecordView: View {
             treatmentsSection(data)
             historySection(data)
         }
+        .gardenBackground()
     }
 
     @ViewBuilder

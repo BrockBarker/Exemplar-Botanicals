@@ -164,6 +164,10 @@ The app picks up the change on the next message; no app update needed. Settings 
 
 Replace `ios/ExemplarBotanicals/Resources/Assets.xcassets/CoachAvatar.imageset/CoachAvatar.png` with a square photo of David (at least 512 × 512 pixels; 1024 is ideal), keeping the file name. The app crops it to a circle. Rebuild the app.
 
+## Changing the background photo
+
+The photo behind the main screens is `ios/ExemplarBotanicals/Resources/Assets.xcassets/GardenBackground.imageset/GardenBackground.jpg`. Replace it with any photo (a JPEG about 1200 pixels on the long side keeps the app small), keeping the file name, and rebuild. The app softens and lightens it automatically so text stays readable; `GardenBackdrop` in `Views/Shared/Components.swift` sets how much (`blur` radius and overlay opacity).
+
 ## Troubleshooting
 
 | What you see | What to check |

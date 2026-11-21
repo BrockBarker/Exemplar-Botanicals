@@ -65,6 +65,7 @@ struct GardenView: View {
                     Text("Suggestions start with what you have, then free options, then low-cost ones, then products to buy.")
                 }
             }
+            .gardenBackground()
             .navigationTitle("Garden")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -169,6 +170,7 @@ struct UnassignedPlantsView: View {
                 Text("To move a plant into a bed, open it and tap Edit.")
             }
         }
+        .gardenBackground()
         .navigationTitle("Not in a bed")
         .sheet(isPresented: $adding) {
             PlantEditor(plant: nil, defaultBedID: nil)

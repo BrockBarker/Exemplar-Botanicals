@@ -25,6 +25,34 @@ struct CoachAvatar: View {
     }
 }
 
+/// The market-vegetable photo (Assets: GardenBackground) behind the main
+/// screens, blurred and washed with the system background so text and cards
+/// stay easy to read in light and dark mode.
+struct GardenBackdrop: View {
+    var body: some View {
+        Color(.systemGroupedBackground)
+            .overlay {
+                Image("GardenBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .blur(radius: 6, opaque: true)
+            }
+            .overlay(Color(.systemGroupedBackground).opacity(0.72))
+            .clipped()
+            .ignoresSafeArea()
+            .accessibilityHidden(true)
+    }
+}
+
+extension View {
+    /// Puts the garden photo behind a screen. Use on the scroll view or list
+    /// at the root of a screen; sheets and editors keep the plain background.
+    func gardenBackground() -> some View {
+        scrollContentBackground(.hidden)
+            .background { GardenBackdrop() }
+    }
+}
+
 /// A rounded card used on the Today screen.
 struct Card<Content: View>: View {
     @ViewBuilder var content: Content

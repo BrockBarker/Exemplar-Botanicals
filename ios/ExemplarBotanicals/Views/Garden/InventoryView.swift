@@ -46,6 +46,7 @@ struct InventoryView: View {
                 }
             }
         }
+        .gardenBackground()
         .navigationTitle("What I have")
     }
 
@@ -90,6 +91,7 @@ struct CoachNotesView: View {
                 }
             }
         }
+        .gardenBackground()
         .navigationTitle("Remembered")
     }
 

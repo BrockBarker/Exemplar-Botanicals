@@ -53,6 +53,7 @@ struct JournalView: View {
                     }
                 }
             }
+            .gardenBackground()
             .navigationTitle("Journal")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

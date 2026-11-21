@@ -66,6 +66,7 @@ struct CoachView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) { inputBar }
+            .gardenBackground()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {

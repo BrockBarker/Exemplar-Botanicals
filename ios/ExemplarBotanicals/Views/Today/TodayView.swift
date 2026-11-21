@@ -26,7 +26,7 @@ struct TodayView: View {
                 }
                 .padding(16)
             }
-            .background(Color(.systemGroupedBackground))
+            .gardenBackground()
             .refreshable { await app.refresh(forceWeather: true) }
             .navigationTitle("Today")
             .toolbar {

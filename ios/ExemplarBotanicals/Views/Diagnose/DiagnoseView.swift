@@ -39,6 +39,7 @@ struct DiagnoseView: View {
                 .padding(16)
             }
             .scrollDismissesKeyboard(.interactively)
+            .gardenBackground()
             .navigationTitle("Photo check")
             .toolbar {
                 if result != nil {
