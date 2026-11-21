@@ -5,14 +5,22 @@ import Foundation
 public enum DemoCoach {
     public static let notice = "(Demo mode: the live coach isn't connected yet, so this answer comes from the app's built-in rules.)"
 
+    /// `noted` is what the app just remembered from this message (see `SupplyMentions`); the
+    /// reply confirms it, and answers only the part of the message that asks something.
     public static func reply(
         to question: String,
         state: GardenState,
         profile: GardenProfileInfo,
         now: Date,
-        calendar: Calendar
+        calendar: Calendar,
+        noted: [CoachAction] = []
     ) -> String {
-        let q = question.lowercased()
+        let acknowledgment = SupplyMentions.acknowledgment(for: noted)
+        let asked = acknowledgment == nil ? question : SupplyMentions.questionText(question)
+        if let acknowledgment = acknowledgment, asked.isEmpty {
+            return "\(acknowledgment)\n\n\(notice)"
+        }
+        let q = asked.lowercased()
         let today = LocalDay(now, calendar: calendar)
         func asks(_ words: String...) -> Bool { words.contains { q.contains($0) } }
         let body: String
@@ -52,6 +60,9 @@ public enum DemoCoach {
             body = "Get supports in early, within a couple of weeks of planting, so you don't tear roots later. Set stakes 3 to 4 inches from the stem and tie loosely in a figure eight with soft ties or strips of old T-shirt."
         } else {
             body = overviewAnswer(state, now: now, calendar: calendar)
+        }
+        if let acknowledgment = acknowledgment {
+            return "\(acknowledgment)\n\n\(body)\n\n\(notice)"
         }
         return "\(body)\n\n\(notice)"
     }

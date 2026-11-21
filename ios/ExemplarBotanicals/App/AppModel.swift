@@ -312,12 +312,17 @@ final class AppModel {
         guard let last = history.last, last.isUser else { return }
 
         if !coach.isLive {
+            // Remember what they said they have (or ran out of), as the live coach does with
+            // update_inventory, then answer with it already counted.
+            let noted = SupplyMentions.actions(from: last.text)
+            let lines = noted.isEmpty ? [] : ActionApplier.apply(noted, context: context, today: today)
             let garden = GardenRepository.load(context)
             let reply = DemoCoach.reply(
-                to: last.text, state: garden.state(weather: weather), profile: garden.profile.info, now: Date(), calendar: calendar
+                to: last.text, state: garden.state(weather: weather), profile: garden.profile.info, now: Date(), calendar: calendar,
+                noted: noted
             )
             try? await Task.sleep(nanoseconds: 600_000_000)
-            context.insert(ChatMessage(role: .assistant, text: reply, isDemo: true))
+            context.insert(ChatMessage(role: .assistant, text: reply, actionLines: lines, isDemo: true))
             save()
             return
         }
