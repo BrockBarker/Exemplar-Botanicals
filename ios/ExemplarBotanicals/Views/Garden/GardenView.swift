@@ -8,7 +8,6 @@ struct GardenView: View {
     @Environment(AppModel.self) private var app
     @Query(sort: \Bed.created) private var beds: [Bed]
     @Query(sort: \Plant.created) private var plants: [Plant]
-    @Query(sort: \InventoryItem.created) private var inventory: [InventoryItem]
 
     @State private var addingBed = false
     @State private var showSettings = false
@@ -47,22 +46,12 @@ struct GardenView: View {
 
                 Section {
                     NavigationLink {
-                        InventoryView()
-                    } label: {
-                        HStack {
-                            Label("What I have", systemImage: "shippingbox")
-                            Spacer()
-                            Text("\(inventory.count)")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    NavigationLink {
                         CoachNotesView()
                     } label: {
                         Label("Things \(app.coachName) remembers", systemImage: "brain")
                     }
                 } footer: {
-                    Text("Suggestions start with what you have, then free options, then low-cost ones, then products to buy.").onPhoto()
+                    Text("Tell \(app.coachName) in a chat what you have on hand, like a compost pile or a bottle of fish emulsion. Suggestions start with those, then free options, then low-cost ones, then products to buy.").onPhoto()
                 }
             }
             .gardenBackground()
