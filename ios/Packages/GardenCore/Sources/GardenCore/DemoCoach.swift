@@ -32,7 +32,7 @@ public enum DemoCoach {
             "start transplants", "starting transplants", "grow my own transplants", "sow indoors", "seedling mix", "potting mix"
         ) {
             body = seedStartAnswer
-        } else if asks("transplant", "plant out", "planting out", "set out", "planting hole", "put them in the ground") {
+        } else if asks("transplant", "plant out", "planting out", "set out", "planting hole", "put them in the ground", "root bound", "rootbound", "root-bound", "circling roots") {
             body = transplantAnswer
         } else if asks("bed"), asks("how big", "how wide", "how tall", "how deep", "how high", "what size", "dimensions", "how long") {
             body = bedSizeAnswer
@@ -63,14 +63,24 @@ public enum DemoCoach {
             body = yellowAnswer
         } else if asks("urine", "pee") {
             body = urineAnswer(state, profile: profile)
+        } else if asks("nitrate", "salt fertilizer", "salt-based", "fertilizer salts") {
+            body = saltsAnswer
+        } else if asks("compost tea", "aerated", "korean natural", "knf", "jadam") {
+            body = fussyAnswer
+        } else if asks("chicken manure", "chicken litter", "chicken poop", "poultry") {
+            body = chickenAnswer
+        } else if asks("what should i buy", "what do i need to buy", "what products", "which products", "shopping list", "starter kit", "what should i get") {
+            body = kitAnswer
         } else if asks("foliar", "spray", "kelp") {
             body = optionsAnswer(
-                lead: "For seedlings and new transplants, I keep it simple: liquid kelp and fish hydrolysate mixed in a small spray bottle, about once a week, and I keep going for 2 or 3 weeks after they're transplanted. Spray early morning or evening when it's under about 85°F, calm, and no rain is due for a few hours, and coat the leaf undersides. For established plants, every couple of weeks during active growth is plenty.",
+                lead: "For seedlings and new transplants, I keep it simple: liquid kelp and fish hydrolysate mixed in a small spray bottle, about once a week, and I keep going for 2 or 3 weeks after they're transplanted. " + foliarTiming +
+                    " For established plants, every couple of weeks during active growth is plenty.",
                 need: .foliar, state: state
             )
-        } else if asks("feed", "fertiliz", "nitrogen", "compost") {
+        } else if asks("feed", "fertiliz", "nitrogen", "compost", "too green", "dark green") {
             body = optionsAnswer(
-                lead: "Only feed what will use it: heavy feeders like tomatoes, squash and corn once they start flowering, and anything pale and slow-growing. Most crops do fine on compost-rich soil. When I do feed, it's mostly MicroLife All Purpose granular, plus a handful in each planting hole at transplanting. If something needs a boost, here's what I'd reach for, starting with what you have:",
+                lead: "Only feed what will use it: heavy feeders like tomatoes, squash and corn once they start flowering, and anything pale and slow-growing. Most crops do fine on compost-rich soil. When I do feed, it's mostly MicroLife All Purpose granular, plus a handful in each planting hole at transplanting. " + tooGreen +
+                    " If something needs a boost, here's what I'd reach for, starting with what you have:",
                 need: .feed, state: state
             )
         } else if asks("mulch") {
@@ -96,16 +106,19 @@ public enum DemoCoach {
     static let seedStartAnswer = """
     Here's how I grow my transplants:
     1. Sow into sifted compost with a bit of Azomite and MicroLife mixed in.
-    2. Once they're up, foliar spray the seedlings about once a week with a simple mix of liquid kelp and fish hydrolysate in a small spray bottle (each at its label's foliar rate).
-    3. When they go out, dig each hole, mix a handful of MicroLife into it, and keep up the weekly kelp and fish spray for another 2 or 3 weeks.
+    2. Once they're up, foliar spray the seedlings about once a week, early in the morning before the dew dries, with a simple mix of liquid kelp and fish hydrolysate in a small spray bottle (each at its label's foliar rate).
+    3. Don't let them get root bound: pot them up or plant them out before roots circle the cell.
+    4. When they go out, dig each hole, mix a handful of MicroLife into it, and keep up the weekly kelp and fish spray for another 2 or 3 weeks.
+    Consistency is the big thing: keep them from ever stressing.
     """
 
     static let transplantAnswer = """
     When I transplant:
     1. Dig the hole for each plant and mix a handful of MicroLife into the hole.
-    2. Give them extra-wide spacing, more room than the seed packet says, so each one can grow into an exemplary individual.
-    3. Keep foliar spraying with a small bottle of liquid kelp and fish hydrolysate about once a week for another 2 or 3 weeks.
-    4. Mulch with aged leaves. Oak is my favorite, but this is flexible.
+    2. If a bought transplant is root bound, tease the roots out gently before it goes in. If it lost a lot of roots doing that, remove a leaf or two to even out the root-to-shoot ratio.
+    3. Give them extra-wide spacing, more room than the seed packet says, so each one can grow into an exemplary individual.
+    4. Keep foliar spraying with a small bottle of liquid kelp and fish hydrolysate about once a week, early in the morning before the dew dries, for another 2 or 3 weeks.
+    5. Mulch with aged leaves. Oak is my favorite, but this is flexible.
     """
 
     static let bedSizeAnswer = """
@@ -122,6 +135,25 @@ public enum DemoCoach {
     4. For winter growing, as much sun as possible.
     """
 
+    /// David's foliar timing and harvest gap.
+    static let foliarTiming = "Spray early in the morning, before the dew dries, when the leaves' pores (stomata) are open and take it in best. Pick a calm morning under about 85°F with no rain due for a few hours, and coat the leaf undersides. I don't foliar spray anything within a couple of weeks of harvest."
+
+    /// When David stops feeding.
+    static let tooGreen = "I fertilize until I see the leaves turn a little too green, then stop. A little extra nitrogen in the plant is OK, but it's best not to let it build up: that makes soft, lush growth that draws aphids and sets less fruit."
+
+    static let saltsAnswer = "I avoid salt fertilizers like calcium nitrate. They push the plant fast, can build up salts in the soil, and throw nutrients out of balance, which is the same reason I skip concentrated things like rock phosphate and blood meal. " +
+        "For calcium, I add lots of crushed eggshells to all my beds, and Azomite for minerals. For feeding, it's mostly MicroLife All Purpose granular, and I stop once the leaves turn a little too green."
+
+    /// David's whole kit (backend/persona/method.md, "Keep it simple").
+    static let kitAnswer = "I keep products and processes simple. My whole kit is Azomite, a quality brand of fish hydrolysate, a quality brand of kelp extract, and a good organic granular, which for me is MicroLife All Purpose. " +
+        "Beyond that, the good stuff is mostly free: manure, kitchen scraps, eggshells and crushed oyster shells. Start with compost and those, and buy the four things above when you need them."
+
+    static let fussyAnswer = "I keep things simple. Actively aerated compost tea is more effort than result, I find. Korean Natural Farming is cool, but likewise it seems like more effort than results. " +
+        "My kit is just Azomite, a quality fish hydrolysate, a quality kelp extract and a good organic granular. For a foliar boost, a small spray bottle of liquid kelp and fish hydrolysate does the job."
+
+    static let chickenAnswer = "I avoid chicken litter because of the arsenic. Other manure is good: well-aged cow, horse or rabbit manure, composted or aged at least 4 to 6 months before it goes on beds with food crops. " +
+        "Kitchen scraps, eggshells and crushed oyster shells are good too."
+
     static let wateringHabit = "I water regularly enough that plants never wilt. Early in a plant's life I water nearly every day so it isn't stressed at all, and I slack off once it's established."
 
     static let spacingAnswer = "I give everything extra-wide spacing, more room than the seed packet says rather than less, so each plant can grow into an exemplary individual. Crowded plants fight over water and food and get less airflow, which invites disease."
@@ -133,11 +165,14 @@ public enum DemoCoach {
         My beds are 5 feet wide, 2 feet tall and 10 to 12 feet long.
         1. The base mix is about half silty topsoil and half aged wood chips or finished compost.
         2. Then as much biochar as I can get, up to about 10% of the mix at most, and a fair amount of Azomite.
-        3. Extras if I've got them: fresh kitchen scraps mixed in, lots of bones from bone broth, pretty much any green organic matter. I'm not against putting a piece of roadkill down in the bed; bury it deep at the bottom and wear gloves.
+        3. Extras if I've got them: well-aged manure (not chicken litter; I avoid it because of the arsenic), fresh kitchen scraps mixed in, lots of bones from bone broth, crushed eggshells and oyster shells, pretty much any green organic matter. I'm not against putting a piece of roadkill down in the bed; bury it deep at the bottom and wear gloves.
         None of the extras are entirely necessary. Topsoil plus wood chips or compost makes a good bed on its own. Then plant with extra-wide spacing and mulch with aged leaves.
         """
-        let useful = ["compost", "wood chip", "biochar", "azomite", "kitchen scrap", "bone", "manure", "topsoil", "casting"]
-        let have = state.inventory.map { $0.name }.filter { name in useful.contains { name.lowercased().contains($0) } }
+        let useful = ["compost", "wood chip", "biochar", "azomite", "kitchen scrap", "bone", "manure", "topsoil", "casting", "eggshell", "oyster"]
+        let have = state.inventory.map { $0.name }.filter { name in
+            let lower = name.lowercased()
+            return useful.contains { lower.contains($0) } && !Toolbox.avoided.contains { lower.contains($0) }
+        }
         if !have.isEmpty {
             text += "\nFrom what you've told me, you already have \(SupplyMentions.listed(have.map { SupplyMentions.proseName($0) ?? $0 })) to work with."
         }

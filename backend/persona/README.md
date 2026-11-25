@@ -7,7 +7,7 @@ when the backend is built. Edit these files to make the coach sound and think li
 | --- | --- | --- |
 | `about.md` | Who David is: where he gardens, for how long, what he grows, what he's known for | `<!-- STATUS: placeholder -->` |
 | `voice.md` | How David talks to a friend about gardening: tone, phrases, length, humor | `<!-- STATUS: placeholder -->` |
-| `method.md` | David's own growing method in his words (raised-bed mix, starting transplants, foliar, transplanting, mulch, spacing). The coach follows it over the starter files | none: it's his own |
+| `method.md` | David's own growing method in his words (siting, bed size and mix, keeping it simple, consistency, starting transplants, transplanting, foliar timing, feeding, mulch, spacing). The coach follows it over the starter files | none: it's his own |
 | `opinions.md` | Strong opinions, pet peeves, what he never recommends, common beginner mistakes | `<!-- STATUS: starter -->` |
 | `products.md` | His go-to products, each with his own pros, cons and price notes | `<!-- STATUS: starter -->` |
 | `sample-answers.md` | 30 to 50 real questions with answers written (or transcribed) the way he'd answer a friend | `<!-- STATUS: placeholder -->` |

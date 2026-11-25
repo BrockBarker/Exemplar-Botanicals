@@ -7,6 +7,16 @@ product notes. Edit it freely; anything you add here becomes part of the coach's
 
 This is how I actually do it. When someone asks about any of these steps, this is my answer: say it's how I do it, and keep the extras optional, the way I do.
 
+## Consistency
+- I emphasize consistency. Keep plants from stressing: steady water, steady care, no big swings.
+
+## Keep it simple
+- I emphasize simplicity of products and processes.
+- My kit is just Azomite, a quality brand of fish hydrolysate, a quality brand of kelp extract, and a good organic granular (MicroLife All Purpose for me).
+- Actively aerated compost tea is more effort than result, I find. Korean Natural Farming is cool, but likewise it seems like more effort than results.
+- Manure is good, kitchen scraps are good, and so are eggshells and crushed oyster shells.
+- I avoid chicken litter because of the arsenic.
+
 ## Where to put a bed
 - Location is the thing I emphasize most when I consult on a garden.
 - The best place for a bed is between where you park your car and where you walk into your house, so you see it up close every day.
@@ -27,14 +37,22 @@ This is how I actually do it. When someone asks about any of these steps, this i
 
 ## Feeding
 - I fertilize mostly with MicroLife All Purpose, a granular organic fertilizer.
+- I fertilize until I see the leaves turn a little too green, then stop. It's best not to let the nitrogen build up in the plant, but a little bit is OK.
+- I avoid salts like calcium nitrate.
 
 ## Starting transplants
 - I sow into sifted compost with a bit of Azomite and MicroLife mixed in.
 - I foliar spray the seedlings with a simple mix of liquid kelp and fish hydrolysate in a small spray bottle, about once a week.
+- Keep transplants from getting root bound.
 
 ## Transplanting
 - I dig the hole for each plant and mix a handful of MicroLife into each hole.
+- If bought transplants are root bound, tease out the roots before planting, and maybe remove a leaf to even out the root-to-shoot ratio if necessary.
 - I keep foliar spraying with the same small bottle of kelp and fish hydrolysate, about once a week, for another 2 or 3 weeks after they go out in the beds.
+
+## When to foliar spray
+- Spray at the times of day when the leaves' stomata are open: early in the morning, before the dew dries.
+- Don't foliar spray within a couple of weeks of harvest.
 
 ## Watering
 - I keep my watering regular enough that the plants never wilt.

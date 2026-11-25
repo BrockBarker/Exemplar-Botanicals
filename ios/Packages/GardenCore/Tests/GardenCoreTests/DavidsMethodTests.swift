@@ -81,6 +81,52 @@ final class DavidsMethodTests: XCTestCase {
         XCTAssertFalse(feed.contains { $0.id == "blood_meal" || $0.id == "feather_meal" })
     }
 
+    func testFoliarTimingAndHarvestGap() {
+        let answer = ask("When should I foliar spray?")
+        XCTAssertTrue(answer.contains("before the dew dries"))
+        XCTAssertTrue(answer.contains("stomata"))
+        XCTAssertTrue(answer.contains("within a couple of weeks of harvest"))
+    }
+
+    func testFeedUntilALittleTooGreenAndNoSalts() {
+        XCTAssertTrue(ask("How much should I fertilize my peppers?").contains("a little too green, then stop"))
+        XCTAssertTrue(ask("Should I use calcium nitrate for blossom end rot?").contains("I avoid salt fertilizers like calcium nitrate"))
+        let feed = Toolbox.ranked(for: .feed, inventory: [InventoryInfo(name: "Calcium nitrate", category: .fertilizer)])
+        XCTAssertFalse(feed.contains { $0.name == "Calcium nitrate" })
+
+        let tomato = Fixtures.plant("Big Beef", crop: "tomato", plantedDaysAgo: 60)
+        let nudge = NudgeEngine(calendar: Fixtures.calendar).candidates(Fixtures.state(plants: [tomato]), now: Fixtures.morning)
+            .first { $0.kind == .feed }
+        XCTAssertTrue(nudge?.body.contains("Skip it if the leaves already look a little too green.") == true)
+        XCTAssertTrue(nudge?.detail.contains("a little too green") == true)
+    }
+
+    func testKeepsItSimple() {
+        let kit = ask("What products should I buy to get started?")
+        XCTAssertTrue(kit.contains("Azomite, a quality brand of fish hydrolysate, a quality brand of kelp extract, and a good organic granular"))
+        XCTAssertTrue(kit.contains("crushed oyster shells"))
+        XCTAssertTrue(ask("Is compost tea worth making?").contains("more effort than result"))
+        XCTAssertTrue(ask("What about Korean Natural Farming?").contains("more effort than results"))
+        XCTAssertTrue(ask("Can I use chicken manure?").contains("I avoid chicken litter because of the arsenic"))
+
+        let feed = Toolbox.ranked(for: .feed, inventory: [InventoryInfo(name: "Chicken manure", category: .compost)])
+        XCTAssertFalse(feed.contains { $0.tier == .owned })
+        XCTAssertTrue(feed.contains { $0.id == "manure" })
+        let owned = Fixtures.state(inventory: [
+            InventoryInfo(name: "Chicken manure", category: .compost), InventoryInfo(name: "Crushed oyster shells", category: .amendment),
+        ])
+        let mix = ask("How do I build a raised bed?", owned)
+        XCTAssertTrue(mix.contains("you already have crushed oyster shells to work with"))
+        XCTAssertFalse(mix.contains("you already have chicken"))
+    }
+
+    func testConsistencyAndRootBoundTransplants() {
+        let answer = ask("The tomato transplants I bought are root bound. What do I do?")
+        XCTAssertTrue(answer.contains("tease the roots out gently"))
+        XCTAssertTrue(answer.contains("root-to-shoot ratio"))
+        XCTAssertTrue(ask("How do you start seeds for transplants?").contains("Don't let them get root bound"))
+    }
+
     func testRemembersHisMaterials() {
         let names = SupplyMentions.actions(from: "I've got MicroLife, some biochar and a bag of fish hydrolysate").compactMap { $0.name }
         XCTAssertEqual(names, ["MicroLife All Purpose", "Biochar", "Fish hydrolysate"])

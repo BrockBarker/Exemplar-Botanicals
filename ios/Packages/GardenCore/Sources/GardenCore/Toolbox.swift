@@ -52,8 +52,14 @@ public struct RankedOption: Identifiable, Hashable, Sendable {
 
 public enum Toolbox {
     /// David never uses rock phosphate, blood meal, bone meal or other concentrated
-    /// single-nutrient feeds (backend/persona/method.md), so they aren't offered here.
-    static let concentrated = ["blood meal", "bone meal", "rock phosphate", "feather meal", "bat guano", "sul-po-mag", "langbeinite"]
+    /// single-nutrient feeds, avoids salt fertilizers like calcium nitrate, and avoids chicken
+    /// litter because of the arsenic (backend/persona/method.md), so none of these are offered
+    /// here even when owned.
+    static let avoided = [
+        "blood meal", "bone meal", "rock phosphate", "feather meal", "bat guano", "sul-po-mag", "langbeinite",
+        "calcium nitrate", "potassium nitrate", "ammonium nitrate", "sodium nitrate", "chilean nitrate", "ammonium sulfate",
+        "chicken", "poultry",
+    ]
 
     public static let options: [OrganicOption] = [
         // Feeding
@@ -61,6 +67,11 @@ public enum Toolbox {
             id: "compost", name: "Compost or worm castings", tier: .free, needs: [.feed],
             howTo: "Side-dress about an inch of finished compost around the plant and scratch it in lightly, then water.",
             keywords: ["compost", "casting", "vermicompost"]
+        ),
+        OrganicOption(
+            id: "manure", name: "Well-aged manure (cow, horse or rabbit)", tier: .free, needs: [.feed],
+            howTo: "Side-dress about an inch of well-aged or composted manure around the plant and scratch it in lightly, then water.",
+            caution: "Age it at least 4 to 6 months first. David avoids chicken litter because of the arsenic.", keywords: ["manure"]
         ),
         OrganicOption(
             id: "comfrey_tea", name: "Comfrey or weed tea", tier: .free, needs: [.feed],
@@ -109,11 +120,7 @@ public enum Toolbox {
         ),
 
         // Foliar
-        OrganicOption(
-            id: "compost_tea", name: "Compost tea", tier: .free, needs: [.foliar],
-            howTo: "Steep a shovelful of compost in a bucket of water overnight, strain through cloth, and spray leaves top and bottom.",
-            keywords: ["compost tea"]
-        ),
+        // No compost tea: David finds it more effort than result. Keep it simple.
         OrganicOption(
             id: "comfrey_foliar", name: "Comfrey tea, diluted", tier: .free, needs: [.foliar],
             howTo: "Dilute about 1 to 15, strain well, and spray leaves top and bottom.", keywords: ["comfrey"]
@@ -212,8 +219,8 @@ public enum Toolbox {
 
         for item in inventory {
             let lower = item.name.lowercased()
-            // Even if they own one, David's method skips concentrated single-nutrient feeds.
-            if concentrated.contains(where: { lower.contains($0) }) { continue }
+            // Even if they own one, David's method skips concentrated feeds, salts and chicken litter.
+            if avoided.contains(where: { lower.contains($0) }) { continue }
             if let match = candidates.first(where: { opt in opt.keywords.contains(where: { lower.contains($0) }) }) {
                 guard !ownedOptionIDs.contains(match.id) else { continue }
                 ownedOptionIDs.insert(match.id)

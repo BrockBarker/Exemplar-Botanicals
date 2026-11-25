@@ -8,6 +8,8 @@ Format: keep one product per "###" heading so the coach can find it.
 -->
 # Products David knows
 
+David keeps it simple. His whole kit is Azomite, a quality fish hydrolysate, a quality kelp extract and a good organic granular (MicroLife All Purpose). Lead with those; the rest are here so the coach can answer questions about them.
+
 Prices are rough typical US retail ranges for home-garden sizes. Always say prices vary by store and region.
 
 ## Liquid feeds (fast)
@@ -138,7 +140,7 @@ David doesn't use these himself: he never soil tests and avoids concentrated ame
 - Price: about $15 to $30 for a small pack.
 
 ### Unsulfured blackstrap molasses
-- Use: a tablespoon per gallon in compost tea or a soil drench to feed microbes.
+- Use: a tablespoon per gallon in a soil drench to feed microbes. Not part of David's kit.
 - Pros: cheap, at any grocery store.
 - Cons: modest effect; too much can attract ants.
 - Price: about $5 to $8 per bottle.

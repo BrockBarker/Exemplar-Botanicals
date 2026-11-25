@@ -88,9 +88,10 @@ final class NudgePacingTests: XCTestCase {
 
     // MARK: Ledger
 
-    /// A cherry tomato that needs staking and was fed recently, so staking is the only nudge.
+    /// A pepper that needs staking and was fed recently, so staking is the only nudge. It's past
+    /// its first 3 weeks, so the new-planting water checks and sprays are done.
     private func stakingState() -> GardenState {
-        let plant = Fixtures.plant("Sungold", crop: "cherry_tomato", plantedDaysAgo: 12)
+        let plant = Fixtures.plant("Jalapeño", crop: "pepper", plantedDaysAgo: 25)
         let fed = JournalInfo(day: Fixtures.day(-5), kind: .feeding, what: "Compost", plantID: plant.id)
         return Fixtures.state(plants: [plant], journal: [fed])
     }

@@ -53,7 +53,8 @@ final class ToolboxTests: XCTestCase {
         let foliar = Toolbox.ranked(for: .foliar, inventory: [InventoryInfo(name: "Maxicrop liquid seaweed", category: .foliar)])
         XCTAssertEqual(foliar[0].tier, .owned)
         XCTAssertFalse(foliar.contains { $0.id == "kelp" })
-        XCTAssertEqual(foliar[1].id, "compost_tea")
+        XCTAssertEqual(foliar[1].id, "comfrey_foliar")
+        XCTAssertFalse(foliar.contains { $0.id == "compost_tea" }, "David finds compost tea more effort than result")
 
         let frost = Toolbox.ranked(for: .frostCover, inventory: [InventoryInfo(name: "Old bedsheets", category: .other)])
         XCTAssertEqual(frost.map { $0.tier }, [.owned, .lowCost])
