@@ -24,6 +24,12 @@ Prices are rough typical US retail ranges for home-garden sizes. Always say pric
 - Cons: costs more than plain emulsion; can clog fine sprayer nozzles if not shaken and strained.
 - Price: about $20 to $35 per quart.
 
+### Fish hydrolysate (e.g. Neptune's Harvest Fish Fertilizer)
+- Use: David mixes it with liquid kelp in a small spray bottle for his weekly seedling and new-transplant foliar spray.
+- Pros: cold-processed, gentle, less smell than emulsion.
+- Cons: still smells a little; shake well and strain so it doesn't clog a fine nozzle.
+- Price: about $20 to $35 per quart.
+
 ### Liquid kelp / seaweed extract (e.g. Maxicrop)
 - Use: foliar spray or root drench for stress recovery and trace minerals.
 - Pros: gentle, hard to overdo, good before and after heat or transplanting.
@@ -32,13 +38,21 @@ Prices are rough typical US retail ranges for home-garden sizes. Always say pric
 
 ## Dry, slow-release feeds
 
+### MicroLife All Purpose (6-2-4, granular, with microbes) — David's go-to
+- Use: David fertilizes mostly with this. Mixed into seed-starting compost (a bit), a handful in each planting hole at transplanting, and as a side-dress when a crop needs feeding.
+- Pros: organic and biological (feeds the soil life as well as the plant), gentle, easy to use.
+- Cons: easiest to find in Texas and the South; elsewhere it's often online or special order. More per pound than single ingredients.
+- Price: roughly $30 to $60 for a 40 lb bag, smaller bags available. Prices vary a lot by region.
+
 ### Balanced organic granular (e.g. Espoma Garden-tone 3-4-4, Tomato-tone 3-4-6; Dr. Earth Home Grown)
 - Use: at planting and as a side-dress every 3 to 6 weeks for heavy feeders.
 - Pros: easy, balanced, includes beneficial microbes, widely available.
 - Cons: slow in cold soil; some blends smell and attract dogs; more expensive per pound of nitrogen than single ingredients.
 - Price: about $12 to $25 for a 4 to 8 lb bag.
 
+<!-- David never uses concentrated single-nutrient feeds (blood meal, bone meal, rock phosphate); the entries below are kept so the coach can answer questions about them. -->
 ### Blood meal (about 12-0-0)
+- David: doesn't use it. Too concentrated; it can create nutrient imbalances. Mention only if asked, and offer MicroLife All Purpose or compost instead.
 - Use: fast organic nitrogen for leafy crops or a yellowing heavy feeder.
 - Pros: concentrated, works within a week or two.
 - Cons: easy to overdo and burn plants; attracts dogs and raccoons.
@@ -51,6 +65,7 @@ Prices are rough typical US retail ranges for home-garden sizes. Always say pric
 - Price: feather meal about $15 to $25 for 5 lb; alfalfa pellets about $20 to $30 for 40 to 50 lb at a feed store.
 
 ### Bone meal (about 3-15-0)
+- David: doesn't use it (too concentrated). He does bury bones from bone broth in new raised beds, which is a different, slower thing.
 - Use: phosphorus and calcium, only when a soil test says phosphorus is low.
 - Pros: long-lasting.
 - Cons: many beds don't need more phosphorus; attracts animals; slow in alkaline soil.
@@ -63,6 +78,8 @@ Prices are rough typical US retail ranges for home-garden sizes. Always say pric
 - Price: about $15 to $25 for 5 lb.
 
 ## Minerals and pH
+
+David doesn't use these himself: he never soil tests and avoids concentrated amendments so nutrients stay in balance. Only bring them up if the gardener asks, or has a soil test that calls for one. Azomite is the exception: he uses a fair amount.
 
 ### Gypsum (calcium sulfate)
 - Use: adds calcium and sulfur without changing pH; can help loosen sodic clay.
@@ -89,7 +106,7 @@ Prices are rough typical US retail ranges for home-garden sizes. Always say pric
 - Price: about $15 to $30 for 5 to 10 lb.
 
 ### Azomite or basalt rock dust
-- Use: slow trace-mineral remineralizing, mixed into beds or compost.
+- Use: slow trace-mineral remineralizing, mixed into beds or compost. David adds a fair amount of Azomite to every new raised bed and a bit to his seed-starting compost.
 - Pros: cheap per application, lasts years.
 - Cons: very slow, results are hard to see in one season.
 - Price: about $25 to $45 for a 44 lb bag.
@@ -107,6 +124,12 @@ Prices are rough typical US retail ranges for home-garden sizes. Always say pric
 - Pros: the best all-around soil builder.
 - Cons: quality varies; check that it smells earthy, not sour.
 - Price: about $5 to $10 per cubic-foot bag; much less by the truckload from a local supplier.
+
+### Biochar
+- Use: David adds as much as he can to a new raised bed, up to about 10% of the mix at most.
+- Pros: lasts for decades in the soil, holds water and nutrients, gives soil life a home.
+- Cons: costs real money in bags; best mixed with compost or soaked in a liquid feed first so it doesn't soak up nutrients at the start.
+- Price: about $20 to $40 per cubic foot bagged; cheaper in bulk.
 
 ### Mycorrhizal inoculant
 - Use: dust roots at transplanting, especially in new or disturbed beds.

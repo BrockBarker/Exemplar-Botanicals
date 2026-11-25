@@ -46,6 +46,11 @@ struct GardenView: View {
 
                 Section {
                     NavigationLink {
+                        DavidsMethodView()
+                    } label: {
+                        Label("How \(app.coachName) grows", systemImage: "leaf")
+                    }
+                    NavigationLink {
                         CoachNotesView()
                     } label: {
                         Label("Things \(app.coachName) remembers", systemImage: "brain")

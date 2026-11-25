@@ -25,7 +25,29 @@ public enum DemoCoach {
         func asks(_ words: String...) -> Bool { words.contains { q.contains($0) } }
         let body: String
 
-        if asks("frost", "freeze", "cold snap") {
+        // David's own method first (backend/persona/method.md): starting transplants,
+        // transplanting, building a raised bed and spacing.
+        if asks(
+            "start seeds", "starting seeds", "seed starting", "seed-starting", "seed tray", "grow transplants", "growing transplants",
+            "start transplants", "starting transplants", "grow my own transplants", "sow indoors", "seedling mix", "potting mix"
+        ) {
+            body = seedStartAnswer
+        } else if asks("transplant", "plant out", "planting out", "set out", "planting hole", "put them in the ground") {
+            body = transplantAnswer
+        } else if asks(
+            "build a raised bed", "building a raised bed", "fill a raised bed", "filling a raised bed", "fill my raised bed", "fill my bed",
+            "fill the bed", "new raised bed", "make a raised bed", "set up a raised bed", "raised bed mix", "bed mix", "soil mix",
+            "what soil", "what do i fill", "biochar", "azomite"
+        ) {
+            body = bedMixAnswer(state)
+        } else if asks(
+            "where should i put", "where to put", "where do i put", "where should i build", "where should the bed", "location",
+            "best spot", "which direction", "facing", "how much sun", "afternoon shade", "full sun", "part shade", "siting"
+        ) {
+            body = sitingAnswer
+        } else if asks("spacing", "how far apart", "space them", "space my", "how close", "how many plants per", "how many per") {
+            body = spacingAnswer
+        } else if asks("frost", "freeze", "cold snap") {
             body = frostAnswer(state, today: today, calendar: calendar)
         } else if asks("harvest", "ripe", "ready", "pick") {
             body = harvestAnswer(state, today: today, calendar: calendar)
@@ -41,17 +63,17 @@ public enum DemoCoach {
             body = urineAnswer(state, profile: profile)
         } else if asks("foliar", "spray", "kelp") {
             body = optionsAnswer(
-                lead: "For a foliar spray, go early morning or evening when it's under about 85°F, calm, and no rain is due for a few hours. Coat the leaf undersides until just dripping. Every couple of weeks during active growth is plenty.",
+                lead: "For seedlings and new transplants, I keep it simple: liquid kelp and fish hydrolysate mixed in a small spray bottle, about once a week, and I keep going for 2 or 3 weeks after they're transplanted. Spray early morning or evening when it's under about 85°F, calm, and no rain is due for a few hours, and coat the leaf undersides. For established plants, every couple of weeks during active growth is plenty.",
                 need: .foliar, state: state
             )
         } else if asks("feed", "fertiliz", "nitrogen", "compost") {
             body = optionsAnswer(
-                lead: "Only feed what will use it: heavy feeders like tomatoes, squash and corn once they start flowering, and anything pale and slow-growing. Most crops do fine on compost-rich soil. If something needs a boost, here's what I'd reach for, starting with what you have:",
+                lead: "Only feed what will use it: heavy feeders like tomatoes, squash and corn once they start flowering, and anything pale and slow-growing. Most crops do fine on compost-rich soil. When I do feed, it's mostly MicroLife All Purpose granular, plus a handful in each planting hole at transplanting. If something needs a boost, here's what I'd reach for, starting with what you have:",
                 need: .feed, state: state
             )
         } else if asks("mulch") {
             body = optionsAnswer(
-                lead: "Mulch keeps roots cool and cuts watering a lot. Keep it an inch or two off the stems.",
+                lead: "My favorite mulch is aged oak leaves, but this is flexible: use what you can get. Mulch keeps roots cool and cuts watering a lot. Keep it an inch or two off the stems.",
                 need: .mulch, state: state
             )
         } else if asks("water", "dry", "wilt") {
@@ -65,6 +87,52 @@ public enum DemoCoach {
             return "\(acknowledgment)\n\n\(body)\n\n\(notice)"
         }
         return "\(body)\n\n\(notice)"
+    }
+
+    // MARK: David's method
+
+    static let seedStartAnswer = """
+    Here's how I grow my transplants:
+    1. Sow into sifted compost with a bit of Azomite and MicroLife mixed in.
+    2. Once they're up, foliar spray the seedlings about once a week with a simple mix of liquid kelp and fish hydrolysate in a small spray bottle (each at its label's foliar rate).
+    3. When they go out, dig each hole, mix a handful of MicroLife into it, and keep up the weekly kelp and fish spray for another 2 or 3 weeks.
+    """
+
+    static let transplantAnswer = """
+    When I transplant:
+    1. Dig the hole for each plant and mix a handful of MicroLife into the hole.
+    2. Give them extra-wide spacing, more room than the seed packet says, so each one can grow into an exemplary individual.
+    3. Keep foliar spraying with a small bottle of liquid kelp and fish hydrolysate about once a week for another 2 or 3 weeks.
+    4. Mulch with aged leaves. Oak is my favorite, but this is flexible.
+    """
+
+    static let sitingAnswer = """
+    Location is the thing I emphasize most when I help someone plan a garden:
+    1. The best spot is between where you park your car and where you walk into your house, so you see it up close every day.
+    2. In the northern hemisphere, face the bed south.
+    3. In the hot, humid South, a bit of shade from the west in the afternoon helps, if you can get it.
+    4. For winter growing, as much sun as possible.
+    """
+
+    static let wateringHabit = "I water regularly enough that plants never wilt. Early in a plant's life I water nearly every day so it isn't stressed at all, and I slack off once it's established."
+
+    static let spacingAnswer = "I give everything extra-wide spacing, more room than the seed packet says rather than less, so each plant can grow into an exemplary individual. Crowded plants fight over water and food and get less airflow, which invites disease."
+
+    static func bedMixAnswer(_ state: GardenState) -> String {
+        var text = """
+        Here's how I build a raised bed:
+        First, the spot: location matters most. Put it between where you park and your front door so you see it every day, face it south, give it a bit of west afternoon shade if you're in the hot, humid South, and as much sun as you can get for winter growing.
+        1. The base mix is about half silty topsoil and half aged wood chips or finished compost.
+        2. Then as much biochar as I can get, up to about 10% of the mix at most, and a fair amount of Azomite.
+        3. Extras if I've got them: fresh kitchen scraps mixed in, lots of bones from bone broth, pretty much any green organic matter. I'm not against putting a piece of roadkill down in the bed; bury it deep at the bottom and wear gloves.
+        None of the extras are entirely necessary. Topsoil plus wood chips or compost makes a good bed on its own. Then plant with extra-wide spacing and mulch with aged leaves.
+        """
+        let useful = ["compost", "wood chip", "biochar", "azomite", "kitchen scrap", "bone", "manure", "topsoil", "casting"]
+        let have = state.inventory.map { $0.name }.filter { name in useful.contains { name.lowercased().contains($0) } }
+        if !have.isEmpty {
+            text += "\nFrom what you've told me, you already have \(SupplyMentions.listed(have.map { SupplyMentions.proseName($0) ?? $0 })) to work with."
+        }
+        return text
     }
 
     /// "What should I be doing?": the most useful things this week, across the whole garden.
@@ -157,7 +225,7 @@ public enum DemoCoach {
     static let yellowAnswer = """
         Yellow leaves have a few usual causes, and feeding isn't always the fix:
         1. The oldest leaves yellow first, evenly: often nitrogen running low, or just old leaves being shed late in the season. If the whole plant is pale and slow, side-dress with compost.
-        2. Yellow between the veins on new growth: usually a pH problem locking out iron. A soil test sorts it out.
+        2. Yellow between the veins on new growth: usually a pH problem locking out iron. A soil test can confirm it if you want to be sure, though I've never needed one for my own beds.
         3. Yellow and droopy with soggy soil: too much water. Let it dry out 2 inches down before watering again.
         4. Yellow with brown spots or rings: likely a leaf disease such as early blight. Pick off the affected leaves and keep water off the foliage.
         A photo in the Photo check tab helps tell them apart.
@@ -185,7 +253,7 @@ public enum DemoCoach {
 
     static func waterAnswer(_ state: GardenState, today: LocalDay, calendar: Calendar) -> String {
         guard state.weather != nil, !state.beds.isEmpty else {
-            return "Do the finger test: push a finger 2 inches into the soil. Dry means water deeply, about an inch, slowly. Cool and damp means wait a day. Log it in the app so the water estimate learns your beds."
+            return "\(Self.wateringHabit)\n\nDo the finger test: push a finger 2 inches into the soil. Dry means water deeply, about an inch, slowly. Cool and damp means wait a day. Log it in the app so the water estimate learns your beds."
         }
         let lines = state.beds.map { bed -> String in
             let ws = WaterModel.state(
@@ -193,7 +261,7 @@ public enum DemoCoach {
             )
             return "\(bed.name): \(ws.status.displayName.lowercased())"
         }
-        return "Here's where I think your beds are, from the weather and your watering log:\n" + lines.joined(separator: "\n") +
+        return Self.wateringHabit + "\n\nHere's where I think your beds are, from the weather and your watering log:\n" + lines.joined(separator: "\n") +
             "\nWhen in doubt, the finger test wins: dry 2 inches down means water deeply."
     }
 
