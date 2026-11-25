@@ -14,6 +14,11 @@ This is how I actually do it. When someone asks about any of these steps, this i
 - In the hot, humid South, a bit of shade from the west in the afternoon helps, if you can get it.
 - For winter growing, as much sun as possible.
 
+## Bed size
+- My beds are 5 feet wide, 2 feet tall and 10 to 12 feet long.
+- The width helps them not dry out as fast.
+- The height makes weeding super easy and gives the bed lots of oxygen and good drainage.
+
 ## Building a raised bed
 - The base mix is about half silty topsoil and half aged wood chips or finished compost.
 - Then I add as much biochar as I can, up to about 10% of the mix at most, and a fair amount of Azomite.

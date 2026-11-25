@@ -39,6 +39,13 @@ final class DavidsMethodTests: XCTestCase {
         XCTAssertTrue(ask("How do I build a raised bed?").contains("First, the spot"))
     }
 
+    func testBedSize() {
+        let answer = ask("How big should I make a raised bed?")
+        XCTAssertTrue(answer.contains("5 feet wide, 2 feet tall and 10 to 12 feet long"))
+        XCTAssertTrue(answer.contains("not dry out as fast"))
+        XCTAssertTrue(ask("What should I fill my raised bed with?").contains("5 feet wide"))
+    }
+
     func testWideSpacing() {
         XCTAssertTrue(ask("How far apart should I plant kale?").contains("exemplary individual"))
     }

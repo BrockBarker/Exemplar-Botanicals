@@ -40,6 +40,8 @@ public enum DemoCoach {
             "what soil", "what do i fill", "biochar", "azomite"
         ) {
             body = bedMixAnswer(state)
+        } else if asks("how big", "how wide", "how tall", "how deep", "how high", "what size", "dimensions", "how long should") {
+            body = bedSizeAnswer
         } else if asks(
             "where should i put", "where to put", "where do i put", "where should i build", "where should the bed", "location",
             "best spot", "which direction", "facing", "how much sun", "afternoon shade", "full sun", "part shade", "siting"
@@ -106,6 +108,12 @@ public enum DemoCoach {
     4. Mulch with aged leaves. Oak is my favorite, but this is flexible.
     """
 
+    static let bedSizeAnswer = """
+    My beds are 5 feet wide, 2 feet tall and 10 to 12 feet long:
+    1. The width helps them not dry out as fast.
+    2. The height makes weeding super easy and gives the bed lots of oxygen and good drainage.
+    """
+
     static let sitingAnswer = """
     Location is the thing I emphasize most when I help someone plan a garden:
     1. The best spot is between where you park your car and where you walk into your house, so you see it up close every day.
@@ -122,6 +130,7 @@ public enum DemoCoach {
         var text = """
         Here's how I build a raised bed:
         First, the spot: location matters most. Put it between where you park and your front door so you see it every day, face it south, give it a bit of west afternoon shade if you're in the hot, humid South, and as much sun as you can get for winter growing.
+        My beds are 5 feet wide, 2 feet tall and 10 to 12 feet long.
         1. The base mix is about half silty topsoil and half aged wood chips or finished compost.
         2. Then as much biochar as I can get, up to about 10% of the mix at most, and a fair amount of Azomite.
         3. Extras if I've got them: fresh kitchen scraps mixed in, lots of bones from bone broth, pretty much any green organic matter. I'm not against putting a piece of roadkill down in the bed; bury it deep at the bottom and wear gloves.

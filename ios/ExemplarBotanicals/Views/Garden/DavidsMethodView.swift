@@ -21,6 +21,7 @@ struct DavidsMethodView: View {
             "For winter growing, as much sun as possible.",
         ]),
         Step(title: "Building a raised bed", symbol: "square.stack.3d.up", lines: [
+            "5 feet wide so it doesn't dry out as fast, 2 feet tall for easy weeding, oxygen and drainage, and 10 to 12 feet long.",
             "About half silty topsoil and half aged wood chips or finished compost.",
             "As much biochar as I can get, up to about 10% of the mix at most, and a fair amount of Azomite.",
             "Extras if I've got them: fresh kitchen scraps, bones from bone broth, any green organic matter, even a piece of roadkill buried deep.",
