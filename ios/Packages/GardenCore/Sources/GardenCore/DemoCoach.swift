@@ -34,14 +34,14 @@ public enum DemoCoach {
             body = seedStartAnswer
         } else if asks("transplant", "plant out", "planting out", "set out", "planting hole", "put them in the ground") {
             body = transplantAnswer
+        } else if asks("bed"), asks("how big", "how wide", "how tall", "how deep", "how high", "what size", "dimensions", "how long") {
+            body = bedSizeAnswer
         } else if asks(
             "build a raised bed", "building a raised bed", "fill a raised bed", "filling a raised bed", "fill my raised bed", "fill my bed",
             "fill the bed", "new raised bed", "make a raised bed", "set up a raised bed", "raised bed mix", "bed mix", "soil mix",
             "what soil", "what do i fill", "biochar", "azomite"
         ) {
             body = bedMixAnswer(state)
-        } else if asks("how big", "how wide", "how tall", "how deep", "how high", "what size", "dimensions", "how long should") {
-            body = bedSizeAnswer
         } else if asks(
             "where should i put", "where to put", "where do i put", "where should i build", "where should the bed", "location",
             "best spot", "which direction", "facing", "how much sun", "afternoon shade", "full sun", "part shade", "siting"
