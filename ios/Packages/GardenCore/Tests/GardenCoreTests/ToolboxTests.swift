@@ -6,14 +6,14 @@ final class ToolboxTests: XCTestCase {
         let ranked = Toolbox.ranked(for: .feed, inventory: [])
         XCTAssertEqual(ranked.first?.id, "compost")
         XCTAssertEqual(ranked.map { $0.tier }, ranked.map { $0.tier }.sorted())
-        XCTAssertEqual(ranked.filter { $0.tier == .free }.map { $0.id }, ["compost", "comfrey_tea"])
+        XCTAssertEqual(ranked.filter { $0.tier == .free }.map { $0.id }, ["compost", "manure", "comfrey_tea"])
         XCTAssertTrue(ranked.filter { $0.tier == .branded }.allSatisfy { !$0.price.isEmpty })
     }
 
     func testUrineOnlyWhenAskedFor() {
         XCTAssertFalse(Toolbox.ranked(for: .feed, inventory: []).contains { $0.id == "urine" })
         let asked = Toolbox.ranked(for: .feed, inventory: [], includeUrine: true)
-        XCTAssertEqual(asked.filter { $0.tier == .free }.map { $0.id }, ["compost", "comfrey_tea", "urine"])
+        XCTAssertEqual(asked.filter { $0.tier == .free }.map { $0.id }, ["compost", "manure", "comfrey_tea", "urine"])
     }
 
     func testPestOptionsStartGentle() {
