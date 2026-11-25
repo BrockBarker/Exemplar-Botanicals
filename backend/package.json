@@ -2,7 +2,7 @@
   "name": "exemplar-botanicals-backend",
   "version": "0.1.0",
   "private": true,
-  "description": "Small Cloudflare Worker that holds the API keys for the Exemplar Botanicals garden coach (chat, photo diagnosis, nudge wording, voice).",
+  "description": "Small Cloudflare Worker that holds the API keys for the Exemplary Botanicals garden coach (chat, photo diagnosis, nudge wording, voice).",
   "type": "module",
   "scripts": {
     "persona": "node scripts/build-persona.mjs",
