@@ -26,6 +26,7 @@ struct CoachView: View {
                             Label("Demo mode: answers come from the app's built-in rules until the live coach is connected.", systemImage: "info.circle")
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
+                                .onPhoto()
                         }
                         if messages.isEmpty {
                             emptyState
@@ -46,12 +47,15 @@ struct CoachView: View {
                                 Button("Try again") { Task { await app.retryCoach() } }
                                     .buttonStyle(.bordered)
                             }
+                            .padding(10)
+                            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                             .id("error")
                         }
                         if let voiceError = app.voice.errorMessage {
                             Text(voiceError)
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
+                                .onPhoto()
                         }
                         Color.clear.frame(height: 1).id("bottom")
                     }
@@ -66,6 +70,7 @@ struct CoachView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) { inputBar }
+            .gardenBackground()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -119,6 +124,7 @@ struct CoachView: View {
             }
             Text("Ask me anything about your garden. I can see your beds, plants, journal, what you have on hand and the forecast, and I'll keep your records up to date as we talk.")
                 .foregroundStyle(.secondary)
+                .onPhoto()
             ForEach(Self.suggestions, id: \.self) { suggestion in
                 Button {
                     Task { await app.sendToCoach(suggestion) }
@@ -198,6 +204,7 @@ struct MessageRow: View {
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
+                            .onPhoto()
                     }
                     Text(message.text)
                         .padding(.horizontal, 14)
@@ -220,6 +227,7 @@ struct MessageRow: View {
                         Label(line, systemImage: "checkmark.circle.fill")
                             .font(.caption)
                             .foregroundStyle(.secondary)
+                            .onPhoto()
                     }
                     if app.voiceAvailable && !message.isDemo {
                         Button {
@@ -235,6 +243,7 @@ struct MessageRow: View {
                         }
                         .font(.caption)
                         .buttonStyle(.bordered)
+                        .background(.regularMaterial, in: Capsule())
                     }
                 }
                 Spacer(minLength: 24)

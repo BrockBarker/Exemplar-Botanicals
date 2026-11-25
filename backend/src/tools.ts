@@ -105,7 +105,7 @@ export const COACH_TOOLS: Tool[] = [
   {
     name: "update_inventory",
     description:
-      "Add or remove something in the gardener's inventory of fertilizers, amendments, foliar sprays, rock dusts, compost, mulch, biologicals, organic pest controls and tools. Call it when they say they have, bought or were given something, or used it up.",
+      "Remember (add) or forget (remove) something the gardener has on hand: fertilizers, amendments, foliar sprays, rock dusts, compost, free materials like a leaf pile, coffee grounds or a rain barrel, mulch, biologicals, organic pest controls and tools. The app has no inventory screen; this chat is the only way it gets recorded, so call it whenever they say, even in passing, that they have, bought, make or were given something, and remove it when they say they used it up or ran out. Not for things they're only considering buying.",
     input_schema: {
       type: "object",
       properties: {
@@ -291,7 +291,7 @@ export function normalizeAction(name: string, input: unknown, today: string): Co
       if (!action || !itemName) return null;
       return {
         type: "inventory",
-        summary: action === "add" ? `Added ${itemName} to your inventory` : `Removed ${itemName} from your inventory`,
+        summary: action === "add" ? `Remembered you have ${itemName}` : `Noted you're out of ${itemName}`,
         action,
         name: itemName,
         category: oneOf(input.category, INVENTORY_CATEGORIES),

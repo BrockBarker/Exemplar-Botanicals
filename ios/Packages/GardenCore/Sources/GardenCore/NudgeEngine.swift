@@ -37,10 +37,13 @@ public struct NudgeEngine {
         let heat = heatStress(state, today: today, now: now)
         out += heat
         if heat.isEmpty { out += drySpell(state, today: today) }
-        out += moisture(state, today: today)
+        let water = moisture(state, today: today)
+        out += water
+        out += newPlantWater(state, today: today, covered: water)
         out += wind(state, today: today, now: now)
         out += staking(state, today: today)
         out += foliar(state, today: today, now: now)
+        out += newPlantSpray(state, today: today, now: now)
         out += feeding(state, today: today)
         out += harvest(state, today: today)
         out += pestCheck(state, today: today)
@@ -305,8 +308,9 @@ public struct NudgeEngine {
         let plants = state.plants.filter { plant in
             guard plant.crop.foliarBenefit,
                   plant.stage == .vegetative || plant.stage == .flowering || plant.stage == .fruiting else { return false }
-            if let planted = plant.plantedOn, planted.days(to: today, calendar: calendar) < 14 { return false }
-            return true
+            // New plantings get David's weekly transplant spray instead (newPlantSpray).
+            if newPlantAge(plant, on: today) != nil { return false }
+            return !nearHarvest(plant, state: state, today: today)
         }
         guard !plants.isEmpty, let weather = state.weather, !weather.hours.isEmpty else { return [] }
 
@@ -318,18 +322,12 @@ public struct NudgeEngine {
 
         guard let window = bestFoliarWindow(weather.hours, after: now.addingTimeInterval(3600), today: today) else { return [] }
         let windowDay = LocalDay(window.start, calendar: calendar)
-        let isMorning = calendar.minuteOfDay(window.start) < 12 * 60
-        var fire: Date
-        if isMorning {
-            fire = at(windowDay.adding(days: -1, calendar: calendar), 18 * 60 + 30)
-        } else {
-            fire = at(windowDay, 15 * 60)
-        }
-        if fire <= now { fire = window.start.addingTimeInterval(-45 * 60) }
+        let fire = foliarFireDate(for: window, now: now)
 
         let options = Toolbox.ranked(for: .foliar, inventory: state.inventory)
-        let pick = options.first
-        let product = pick.map { $0.tier == .owned ? "your \($0.name)" : $0.name.lowercased() } ?? "liquid kelp"
+        // What they have first; otherwise David's simple kelp and fish hydrolysate spray.
+        let owned = options.first { $0.tier == .owned }
+        let product = owned.map { "your \($0.name)" } ?? "liquid kelp and fish hydrolysate from a small spray bottle"
         let names = NudgeText.list(plants.map { $0.name })
         let dayName = windowDay.spokenName(relativeTo: today, calendar: calendar)
         let temp = window.tempF.map { "\(NudgeText.temp($0)), " } ?? ""
@@ -341,15 +339,15 @@ public struct NudgeEngine {
             fireDate: fire,
             expires: window.end,
             title: "Foliar window \(dayName) \(NudgeText.hourRange(window.start, window.end, calendar: calendar))",
-            body: "\(temp)calm and dry. Spray the \(names) with \(product), coating leaf undersides until just dripping.",
+            body: "\(temp)calm and dry. Before the dew dries, spray the \(names) with \(product), coating leaf undersides until just dripping.",
             detail: NudgeText.optionsDetail(
-                intro: "Foliar feeding works best when it's cool, still and dry, so leaves stay wet long enough to absorb it without burning. " +
+                intro: Self.foliarTiming + " " +
                     (lastSpray.map { "Last spray: \($0.spokenName(relativeTo: today, calendar: calendar))." } ?? "No foliar spray logged yet."),
                 options: options,
-                outro: "Every 1 to 2 weeks during active growth is plenty. It's a boost, not a replacement for feeding the soil."
+                outro: "Every 1 to 2 weeks during active growth is plenty, and none within a couple of weeks of harvest. It's a boost, not a replacement for feeding the soil."
             ),
             plantIDs: plants.map { $0.id },
-            log: SuggestedLog(kind: .foliarSpray, what: pick?.name ?? "Foliar spray", plantIDs: plants.map { $0.id })
+            log: SuggestedLog(kind: .foliarSpray, what: owned?.name ?? "Kelp and fish hydrolysate spray", plantIDs: plants.map { $0.id })
         )]
     }
 
@@ -359,9 +357,14 @@ public struct NudgeEngine {
         var tempF: Double?
     }
 
-    /// Earliest morning (6–9 AM) or evening (6–8 PM) window that is cool, calm and dry.
+    /// David's timing, used in every foliar nudge.
+    static let foliarTiming = "Spray early in the morning, before the dew dries: that's when the leaves' pores (stomata) are open and take the spray in best. " +
+        "Pick a cool, calm, dry morning so the leaves stay wet long enough without burning."
+
+    /// Earliest early-morning window (6–9 AM, while the dew is on and the stomata are open) that
+    /// is cool, calm and dry.
     func bestFoliarWindow(_ hours: [HourlyWeather], after earliest: Date, today: LocalDay) -> Window? {
-        let slots: [(startMinute: Int, length: Int)] = [(6 * 60, 3), (18 * 60, 2)]
+        let slots: [(startMinute: Int, length: Int)] = [(6 * 60, 3)]
         for offset in 0...2 {
             let day = today.adding(days: offset, calendar: calendar)
             for slot in slots {
@@ -383,6 +386,30 @@ public struct NudgeEngine {
             }
         }
         return nil
+    }
+
+    /// Remind the evening before a morning window, or shortly before it if that's already past.
+    func foliarFireDate(for window: Window, now: Date) -> Date {
+        let windowDay = LocalDay(window.start, calendar: calendar)
+        let fire = at(windowDay.adding(days: -1, calendar: calendar), 18 * 60 + 30)
+        return fire > now ? fire : window.start.addingTimeInterval(-45 * 60)
+    }
+
+    /// David doesn't foliar spray within a couple of weeks of harvest: plants already being
+    /// picked, or within 14 days of their usual first harvest.
+    func nearHarvest(_ plant: PlantInfo, state: GardenState, today: LocalDay) -> Bool {
+        if plant.stage == .mature { return true }
+        let care = plant.crop.care
+        if plant.stage == .fruiting && care.pickEveryDays != nil { return true }
+        let bedName = state.bedName(for: plant)
+        let pickedLately = state.journal.contains {
+            $0.kind == .harvest && $0.day <= today && $0.day.days(to: today, calendar: calendar) < 14 && $0.applies(to: plant, bedName: bedName)
+        }
+        if pickedLately { return true }
+        if let first = care.firstHarvestDays, let planted = plant.plantedOn {
+            return first - planted.days(to: today, calendar: calendar) <= 14
+        }
+        return false
     }
 
     func feeding(_ state: GardenState, today: LocalDay) -> [Nudge] {
@@ -433,7 +460,7 @@ public struct NudgeEngine {
             let options = Toolbox.ranked(for: .feed, inventory: state.inventory)
             guard let pick = options.first else { return }
             let use = pick.tier == .owned ? "your \(pick.name)" : pick.name.lowercased()
-            let body = "\(lead) Use \(use): \(NudgeText.lowerFirst(pick.howTo))\(heatNote)"
+            let body = "\(lead) Use \(use): \(NudgeText.lowerFirst(pick.howTo)) Skip it if the leaves already look a little too green.\(heatNote)"
             out.append(Nudge(
                 kind: kind,
                 dedupeKey: key,
@@ -443,7 +470,8 @@ public struct NudgeEngine {
                 title: title,
                 body: body,
                 detail: NudgeText.optionsDetail(
-                    intro: "Heavy feeders and fruiting crops use up soil nitrogen as they grow; a side-dressing now and then keeps them steady. More than that gives lush, soft growth that invites aphids and sets less fruit. The app checks your journal so it won't nag about plants you've fed recently.",
+                    intro: "Heavy feeders and fruiting crops use up soil nitrogen as they grow; a side-dressing now and then keeps them steady. " + Self.tooGreen +
+                        " The app checks your journal so it won't nag about plants you've fed recently.",
                     options: options,
                     outro: ""
                 ),
@@ -470,6 +498,10 @@ public struct NudgeEngine {
         }
         return out
     }
+
+    /// David's rule for when to stop feeding.
+    static let tooGreen = "Feed until the leaves turn a little too green, a deep, almost blue-green, then stop. A little extra nitrogen is OK, but don't let it build up in the plant: " +
+        "that gives lush, soft growth that invites aphids and sets less fruit. I also avoid salt fertilizers like calcium nitrate."
 
     // MARK: - Pacing
 

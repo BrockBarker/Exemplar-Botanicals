@@ -28,17 +28,24 @@ struct DiagnoseView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     if let result = result {
-                        DiagnosisResultView(diagnosis: result, isDemo: resultIsDemo)
-                        resultActions(result)
+                        VStack(alignment: .leading, spacing: 16) {
+                            DiagnosisResultView(diagnosis: result, isDemo: resultIsDemo)
+                            resultActions(result)
+                        }
+                        .padding(16)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                     } else {
-                        intro
-                        photoPicker
-                        if image != nil { details }
+                        Card { intro }
+                        Card {
+                            photoPicker
+                            if image != nil { details }
+                        }
                     }
                 }
                 .padding(16)
             }
             .scrollDismissesKeyboard(.interactively)
+            .gardenBackground()
             .navigationTitle("Photo check")
             .toolbar {
                 if result != nil {

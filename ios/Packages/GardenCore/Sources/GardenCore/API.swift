@@ -154,7 +154,7 @@ public struct CoachAction: Codable, Hashable, Sendable {
         case .journal?: return "Logged \(what ?? "an entry")"
         case .plant?: return "Updated \(plantName ?? "a plant")"
         case .bed?: return "Updated \(bedName ?? "a bed")"
-        case .inventory?: return "Updated your inventory"
+        case .inventory?: return "Remembered what you have"
         case .budget?: return "Updated your budget"
         case .fact?: return "Noted: \(fact ?? "")"
         case nil: return "Updated your garden"

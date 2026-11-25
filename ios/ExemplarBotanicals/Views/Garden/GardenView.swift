@@ -8,7 +8,6 @@ struct GardenView: View {
     @Environment(AppModel.self) private var app
     @Query(sort: \Bed.created) private var beds: [Bed]
     @Query(sort: \Plant.created) private var plants: [Plant]
-    @Query(sort: \InventoryItem.created) private var inventory: [InventoryItem]
 
     @State private var addingBed = false
     @State private var showSettings = false
@@ -38,33 +37,24 @@ struct GardenView: View {
                         Label("Add a bed or container", systemImage: "plus")
                     }
                 } header: {
-                    Text("Beds")
+                    Text("Beds").onPhoto()
                 } footer: {
                     if beds.isEmpty {
-                        Text("Add each bed, row or container, then open it to add what's growing there.")
+                        Text("Add each bed, row or container, then open it to add what's growing there.").onPhoto()
                     }
                 }
 
                 Section {
-                    NavigationLink {
-                        InventoryView()
-                    } label: {
-                        HStack {
-                            Label("What I have", systemImage: "shippingbox")
-                            Spacer()
-                            Text("\(inventory.count)")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
                     NavigationLink {
                         CoachNotesView()
                     } label: {
                         Label("Things \(app.coachName) remembers", systemImage: "brain")
                     }
                 } footer: {
-                    Text("Suggestions start with what you have, then free options, then low-cost ones, then products to buy.")
+                    Text("Tell \(app.coachName) in a chat what you have on hand, like a compost pile or a bottle of fish emulsion. Suggestions start with those, then free options, then low-cost ones, then products to buy.").onPhoto()
                 }
             }
+            .gardenBackground()
             .navigationTitle("Garden")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -166,9 +156,10 @@ struct UnassignedPlantsView: View {
                     Label("Add a plant", systemImage: "plus")
                 }
             } footer: {
-                Text("To move a plant into a bed, open it and tap Edit.")
+                Text("To move a plant into a bed, open it and tap Edit.").onPhoto()
             }
         }
+        .gardenBackground()
         .navigationTitle("Not in a bed")
         .sheet(isPresented: $adding) {
             PlantEditor(plant: nil, defaultBedID: nil)

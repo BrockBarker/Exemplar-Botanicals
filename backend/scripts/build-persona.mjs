@@ -13,7 +13,7 @@ const personaDir = join(here, "..", "persona");
 const outFile = join(here, "..", "src", "persona.generated.ts");
 
 // Fixed order keeps the prompt byte-identical between builds (better prompt caching).
-const ORDER = ["about", "voice", "opinions", "products", "sample-answers"];
+const ORDER = ["about", "voice", "method", "opinions", "products", "sample-answers"];
 
 const files = readdirSync(personaDir)
   .filter((f) => f.endsWith(".md") && f.toLowerCase() !== "readme.md")

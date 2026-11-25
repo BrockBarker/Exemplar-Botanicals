@@ -25,6 +25,49 @@ struct CoachAvatar: View {
     }
 }
 
+/// The market-vegetable photo (Assets: GardenBackground) behind the main
+/// screens, shown full color. Readability comes from the things on top of it:
+/// cards and list rows are solid, the navigation and tab bars are frosted, and
+/// loose text gets a frosted backing with `onPhoto()`.
+struct GardenBackdrop: View {
+    /// Raise these to soften the photo (David asked to see it unsoftened;
+    /// 6 and 0.72 is the softened look).
+    static let blurRadius: CGFloat = 0
+    static let washOpacity: Double = 0
+
+    var body: some View {
+        Color(.systemGroupedBackground)
+            .overlay {
+                Image("GardenBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .blur(radius: Self.blurRadius, opaque: true)
+            }
+            .overlay(Color(.systemGroupedBackground).opacity(Self.washOpacity))
+            .clipped()
+            .ignoresSafeArea()
+            .accessibilityHidden(true)
+    }
+}
+
+extension View {
+    /// Puts the garden photo behind a screen. Use on the scroll view or list
+    /// at the root of a screen; sheets and editors keep the plain background.
+    func gardenBackground() -> some View {
+        scrollContentBackground(.hidden)
+            .background { GardenBackdrop() }
+            .toolbarBackground(.visible, for: .navigationBar, .tabBar)
+    }
+
+    /// A frosted backing for text that sits right on the photo, such as
+    /// headings and list section headers and footers.
+    func onPhoto() -> some View {
+        padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+}
+
 /// A rounded card used on the Today screen.
 struct Card<Content: View>: View {
     @ViewBuilder var content: Content

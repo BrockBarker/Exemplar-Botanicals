@@ -21,7 +21,7 @@ describe("auth and health", () => {
     expect(body.model).toBe("claude-opus-5-5");
     expect(body.voiceAvailable).toBe(false);
     const persona = body.persona as Array<{ name: string; status: string }>;
-    expect(persona.map((p) => p.name)).toEqual(["about", "voice", "opinions", "products", "sample-answers"]);
+    expect(persona.map((p) => p.name)).toEqual(["about", "voice", "method", "opinions", "products", "sample-answers"]);
   });
 
   it("returns 404 for unknown paths", async () => {
