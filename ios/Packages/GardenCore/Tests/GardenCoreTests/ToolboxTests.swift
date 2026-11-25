@@ -6,14 +6,14 @@ final class ToolboxTests: XCTestCase {
         let ranked = Toolbox.ranked(for: .feed, inventory: [])
         XCTAssertEqual(ranked.first?.id, "compost")
         XCTAssertEqual(ranked.map { $0.tier }, ranked.map { $0.tier }.sorted())
-        XCTAssertEqual(ranked.filter { $0.tier == .free }.map { $0.id }, ["compost", "comfrey_tea"])
+        XCTAssertEqual(ranked.filter { $0.tier == .free }.map { $0.id }, ["compost", "manure", "comfrey_tea"])
         XCTAssertTrue(ranked.filter { $0.tier == .branded }.allSatisfy { !$0.price.isEmpty })
     }
 
     func testUrineOnlyWhenAskedFor() {
         XCTAssertFalse(Toolbox.ranked(for: .feed, inventory: []).contains { $0.id == "urine" })
         let asked = Toolbox.ranked(for: .feed, inventory: [], includeUrine: true)
-        XCTAssertEqual(asked.filter { $0.tier == .free }.map { $0.id }, ["compost", "comfrey_tea", "urine"])
+        XCTAssertEqual(asked.filter { $0.tier == .free }.map { $0.id }, ["compost", "manure", "comfrey_tea", "urine"])
     }
 
     func testPestOptionsStartGentle() {
@@ -53,7 +53,8 @@ final class ToolboxTests: XCTestCase {
         let foliar = Toolbox.ranked(for: .foliar, inventory: [InventoryInfo(name: "Maxicrop liquid seaweed", category: .foliar)])
         XCTAssertEqual(foliar[0].tier, .owned)
         XCTAssertFalse(foliar.contains { $0.id == "kelp" })
-        XCTAssertEqual(foliar[1].id, "compost_tea")
+        XCTAssertEqual(foliar[1].id, "comfrey_foliar")
+        XCTAssertFalse(foliar.contains { $0.id == "compost_tea" }, "David finds compost tea more effort than result")
 
         let frost = Toolbox.ranked(for: .frostCover, inventory: [InventoryInfo(name: "Old bedsheets", category: .other)])
         XCTAssertEqual(frost.map { $0.tier }, [.owned, .lowCost])

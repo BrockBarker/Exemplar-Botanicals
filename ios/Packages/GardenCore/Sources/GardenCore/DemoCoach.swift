@@ -25,7 +25,31 @@ public enum DemoCoach {
         func asks(_ words: String...) -> Bool { words.contains { q.contains($0) } }
         let body: String
 
-        if asks("frost", "freeze", "cold snap") {
+        // David's own method first (backend/persona/method.md): starting transplants,
+        // transplanting, building a raised bed and spacing.
+        if asks(
+            "start seeds", "starting seeds", "seed starting", "seed-starting", "seed tray", "grow transplants", "growing transplants",
+            "start transplants", "starting transplants", "grow my own transplants", "sow indoors", "seedling mix", "potting mix"
+        ) {
+            body = seedStartAnswer
+        } else if asks("transplant", "plant out", "planting out", "set out", "planting hole", "put them in the ground", "root bound", "rootbound", "root-bound", "circling roots") {
+            body = transplantAnswer
+        } else if asks("bed"), asks("how big", "how wide", "how tall", "how deep", "how high", "what size", "dimensions", "how long") {
+            body = bedSizeAnswer
+        } else if asks(
+            "build a raised bed", "building a raised bed", "fill a raised bed", "filling a raised bed", "fill my raised bed", "fill my bed",
+            "fill the bed", "new raised bed", "make a raised bed", "set up a raised bed", "raised bed mix", "bed mix", "soil mix",
+            "what soil", "what do i fill", "biochar", "azomite"
+        ) {
+            body = bedMixAnswer(state)
+        } else if asks(
+            "where should i put", "where to put", "where do i put", "where should i build", "where should the bed", "location",
+            "best spot", "which direction", "facing", "how much sun", "afternoon shade", "full sun", "part shade", "siting"
+        ) {
+            body = sitingAnswer
+        } else if asks("spacing", "how far apart", "space them", "space my", "how close", "how many plants per", "how many per") {
+            body = spacingAnswer
+        } else if asks("frost", "freeze", "cold snap") {
             body = frostAnswer(state, today: today, calendar: calendar)
         } else if asks("harvest", "ripe", "ready", "pick") {
             body = harvestAnswer(state, today: today, calendar: calendar)
@@ -39,19 +63,29 @@ public enum DemoCoach {
             body = yellowAnswer
         } else if asks("urine", "pee") {
             body = urineAnswer(state, profile: profile)
+        } else if asks("nitrate", "salt fertilizer", "salt-based", "fertilizer salts") {
+            body = saltsAnswer
+        } else if asks("compost tea", "aerated", "korean natural", "knf", "jadam") {
+            body = fussyAnswer
+        } else if asks("chicken manure", "chicken litter", "chicken poop", "poultry") {
+            body = chickenAnswer
+        } else if asks("what should i buy", "what do i need to buy", "what products", "which products", "shopping list", "starter kit", "what should i get") {
+            body = kitAnswer
         } else if asks("foliar", "spray", "kelp") {
             body = optionsAnswer(
-                lead: "For a foliar spray, go early morning or evening when it's under about 85°F, calm, and no rain is due for a few hours. Coat the leaf undersides until just dripping. Every couple of weeks during active growth is plenty.",
+                lead: "For seedlings and new transplants, I keep it simple: liquid kelp and fish hydrolysate mixed in a small spray bottle, about once a week, and I keep going for 2 or 3 weeks after they're transplanted. " + foliarTiming +
+                    " For established plants, every couple of weeks during active growth is plenty.",
                 need: .foliar, state: state
             )
-        } else if asks("feed", "fertiliz", "nitrogen", "compost") {
+        } else if asks("feed", "fertiliz", "nitrogen", "compost", "too green", "dark green") {
             body = optionsAnswer(
-                lead: "Only feed what will use it: heavy feeders like tomatoes, squash and corn once they start flowering, and anything pale and slow-growing. Most crops do fine on compost-rich soil. If something needs a boost, here's what I'd reach for, starting with what you have:",
+                lead: "Only feed what will use it: heavy feeders like tomatoes, squash and corn once they start flowering, and anything pale and slow-growing. Most crops do fine on compost-rich soil. When I do feed, it's mostly MicroLife All Purpose granular, plus a handful in each planting hole at transplanting. " + tooGreen +
+                    " If something needs a boost, here's what I'd reach for, starting with what you have:",
                 need: .feed, state: state
             )
         } else if asks("mulch") {
             body = optionsAnswer(
-                lead: "Mulch keeps roots cool and cuts watering a lot. Keep it an inch or two off the stems.",
+                lead: "My favorite mulch is aged oak leaves, but this is flexible: use what you can get. Mulch keeps roots cool and cuts watering a lot. Keep it an inch or two off the stems.",
                 need: .mulch, state: state
             )
         } else if asks("water", "dry", "wilt") {
@@ -65,6 +99,84 @@ public enum DemoCoach {
             return "\(acknowledgment)\n\n\(body)\n\n\(notice)"
         }
         return "\(body)\n\n\(notice)"
+    }
+
+    // MARK: David's method
+
+    static let seedStartAnswer = """
+    Here's how I grow my transplants:
+    1. Sow into sifted compost with a bit of Azomite and MicroLife mixed in.
+    2. Once they're up, foliar spray the seedlings about once a week, early in the morning before the dew dries, with a simple mix of liquid kelp and fish hydrolysate in a small spray bottle (each at its label's foliar rate).
+    3. Don't let them get root bound: pot them up or plant them out before roots circle the cell.
+    4. When they go out, dig each hole, mix a handful of MicroLife into it, and keep up the weekly kelp and fish spray for another 2 or 3 weeks.
+    Consistency is the big thing: keep them from ever stressing.
+    """
+
+    static let transplantAnswer = """
+    When I transplant:
+    1. Dig the hole for each plant and mix a handful of MicroLife into the hole.
+    2. If a bought transplant is root bound, tease the roots out gently before it goes in. If it lost a lot of roots doing that, remove a leaf or two to even out the root-to-shoot ratio.
+    3. Give them extra-wide spacing, more room than the seed packet says, so each one can grow into an exemplary individual.
+    4. Keep foliar spraying with a small bottle of liquid kelp and fish hydrolysate about once a week, early in the morning before the dew dries, for another 2 or 3 weeks.
+    5. Mulch with aged leaves. Oak is my favorite, but this is flexible.
+    """
+
+    static let bedSizeAnswer = """
+    My beds are 5 feet wide, 2 feet tall and 10 to 12 feet long:
+    1. The width helps them not dry out as fast.
+    2. The height makes weeding super easy and gives the bed lots of oxygen and good drainage.
+    """
+
+    static let sitingAnswer = """
+    Location is the thing I emphasize most when I help someone plan a garden:
+    1. The best spot is between where you park your car and where you walk into your house, so you see it up close every day.
+    2. In the northern hemisphere, face the bed south.
+    3. In the hot, humid South, a bit of shade from the west in the afternoon helps, if you can get it.
+    4. For winter growing, as much sun as possible.
+    """
+
+    /// David's foliar timing and harvest gap.
+    static let foliarTiming = "Spray early in the morning, before the dew dries, when the leaves' pores (stomata) are open and take it in best. Pick a calm morning under about 85°F with no rain due for a few hours, and coat the leaf undersides. I don't foliar spray anything within a couple of weeks of harvest."
+
+    /// When David stops feeding.
+    static let tooGreen = "I fertilize until I see the leaves turn a little too green, then stop. A little extra nitrogen in the plant is OK, but it's best not to let it build up: that makes soft, lush growth that draws aphids and sets less fruit."
+
+    static let saltsAnswer = "I avoid salt fertilizers like calcium nitrate. They push the plant fast, can build up salts in the soil, and throw nutrients out of balance, which is the same reason I skip concentrated things like rock phosphate and blood meal. " +
+        "For calcium, I add lots of crushed eggshells to all my beds, and Azomite for minerals. For feeding, it's mostly MicroLife All Purpose granular, and I stop once the leaves turn a little too green."
+
+    /// David's whole kit (backend/persona/method.md, "Keep it simple").
+    static let kitAnswer = "I keep products and processes simple. My whole kit is Azomite, a quality brand of fish hydrolysate, a quality brand of kelp extract, and a good organic granular, which for me is MicroLife All Purpose. " +
+        "Beyond that, the good stuff is mostly free: manure, kitchen scraps, eggshells and crushed oyster shells. Start with compost and those, and buy the four things above when you need them."
+
+    static let fussyAnswer = "I keep things simple. Actively aerated compost tea is more effort than result, I find. Korean Natural Farming is cool, but likewise it seems like more effort than results. " +
+        "My kit is just Azomite, a quality fish hydrolysate, a quality kelp extract and a good organic granular. For a foliar boost, a small spray bottle of liquid kelp and fish hydrolysate does the job."
+
+    static let chickenAnswer = "I avoid chicken litter because of the arsenic. Other manure is good: well-aged cow, horse or rabbit manure, composted or aged at least 4 to 6 months before it goes on beds with food crops. " +
+        "Kitchen scraps, eggshells and crushed oyster shells are good too."
+
+    static let wateringHabit = "I water regularly enough that plants never wilt. Early in a plant's life I water nearly every day so it isn't stressed at all, and I slack off once it's established."
+
+    static let spacingAnswer = "I give everything extra-wide spacing, more room than the seed packet says rather than less, so each plant can grow into an exemplary individual. Crowded plants fight over water and food and get less airflow, which invites disease."
+
+    static func bedMixAnswer(_ state: GardenState) -> String {
+        var text = """
+        Here's how I build a raised bed:
+        First, the spot: location matters most. Put it between where you park and your front door so you see it every day, face it south, give it a bit of west afternoon shade if you're in the hot, humid South, and as much sun as you can get for winter growing.
+        My beds are 5 feet wide, 2 feet tall and 10 to 12 feet long.
+        1. The base mix is about half silty topsoil and half aged wood chips or finished compost.
+        2. Then as much biochar as I can get, up to about 10% of the mix at most, and a fair amount of Azomite.
+        3. Extras if I've got them: well-aged manure (not chicken litter; I avoid it because of the arsenic), fresh kitchen scraps mixed in, lots of bones from bone broth, crushed eggshells and oyster shells, pretty much any green organic matter. I'm not against putting a piece of roadkill down in the bed; bury it deep at the bottom and wear gloves.
+        None of the extras are entirely necessary. Topsoil plus wood chips or compost makes a good bed on its own. Then plant with extra-wide spacing and mulch with aged leaves.
+        """
+        let useful = ["compost", "wood chip", "biochar", "azomite", "kitchen scrap", "bone", "manure", "topsoil", "casting", "eggshell", "oyster"]
+        let have = state.inventory.map { $0.name }.filter { name in
+            let lower = name.lowercased()
+            return useful.contains { lower.contains($0) } && !Toolbox.avoided.contains { lower.contains($0) }
+        }
+        if !have.isEmpty {
+            text += "\nFrom what you've told me, you already have \(SupplyMentions.listed(have.map { SupplyMentions.proseName($0) ?? $0 })) to work with."
+        }
+        return text
     }
 
     /// "What should I be doing?": the most useful things this week, across the whole garden.
@@ -157,7 +269,7 @@ public enum DemoCoach {
     static let yellowAnswer = """
         Yellow leaves have a few usual causes, and feeding isn't always the fix:
         1. The oldest leaves yellow first, evenly: often nitrogen running low, or just old leaves being shed late in the season. If the whole plant is pale and slow, side-dress with compost.
-        2. Yellow between the veins on new growth: usually a pH problem locking out iron. A soil test sorts it out.
+        2. Yellow between the veins on new growth: usually a pH problem locking out iron. A soil test can confirm it if you want to be sure, though I've never needed one for my own beds.
         3. Yellow and droopy with soggy soil: too much water. Let it dry out 2 inches down before watering again.
         4. Yellow with brown spots or rings: likely a leaf disease such as early blight. Pick off the affected leaves and keep water off the foliage.
         A photo in the Photo check tab helps tell them apart.
@@ -185,7 +297,7 @@ public enum DemoCoach {
 
     static func waterAnswer(_ state: GardenState, today: LocalDay, calendar: Calendar) -> String {
         guard state.weather != nil, !state.beds.isEmpty else {
-            return "Do the finger test: push a finger 2 inches into the soil. Dry means water deeply, about an inch, slowly. Cool and damp means wait a day. Log it in the app so the water estimate learns your beds."
+            return "\(Self.wateringHabit)\n\nDo the finger test: push a finger 2 inches into the soil. Dry means water deeply, about an inch, slowly. Cool and damp means wait a day. Log it in the app so the water estimate learns your beds."
         }
         let lines = state.beds.map { bed -> String in
             let ws = WaterModel.state(
@@ -193,7 +305,7 @@ public enum DemoCoach {
             )
             return "\(bed.name): \(ws.status.displayName.lowercased())"
         }
-        return "Here's where I think your beds are, from the weather and your watering log:\n" + lines.joined(separator: "\n") +
+        return Self.wateringHabit + "\n\nHere's where I think your beds are, from the weather and your watering log:\n" + lines.joined(separator: "\n") +
             "\nWhen in doubt, the finger test wins: dry 2 inches down means water deeply."
     }
 

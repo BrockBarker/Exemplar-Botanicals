@@ -22,6 +22,7 @@ final class SupplyMentionsTests: XCTestCase {
 
     func testLongestNameWins() {
         XCTAssertEqual(added("I make compost tea every week"), ["Compost tea"])
+        XCTAssertEqual(added("I have chicken manure and some oyster shells"), ["Chicken manure", "Crushed oyster shells"])
         XCTAssertEqual(added("I have kelp meal"), ["Kelp meal"])
         XCTAssertEqual(added("I've got Alaska fish fertilizer"), ["Alaska fish fertilizer"])
     }

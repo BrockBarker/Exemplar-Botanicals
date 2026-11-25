@@ -24,7 +24,7 @@ public enum SupplyMentions {
 
         static let keepsCapital: Set<String> = [
             "Bt", "Garden-tone", "Tomato-tone", "Plant-tone", "Dr. Earth fertilizer", "Neptune's Harvest fish & seaweed",
-            "Alaska fish fertilizer", "Maxicrop liquid kelp", "Safer insecticidal soap", "Azomite",
+            "Alaska fish fertilizer", "Maxicrop liquid kelp", "Safer insecticidal soap", "Azomite", "MicroLife All Purpose",
         ]
     }
 
@@ -37,10 +37,12 @@ public enum SupplyMentions {
         Supply(name: "Alfalfa pellets", category: .fertilizer, phrases: ["alfalfa", "alfalfa pellets", "alfalfa meal", "rabbit food pellets"]),
         Supply(name: "Fish emulsion", category: .fertilizer, phrases: ["fish emulsion", "fish fertilizer"]),
         Supply(name: "Alaska fish fertilizer", category: .fertilizer, phrases: ["alaska fish fertilizer", "alaska fish emulsion", "alaska fish"]),
-        Supply(name: "Neptune's Harvest fish & seaweed", category: .foliar, phrases: ["neptune's harvest", "neptunes harvest", "fish and seaweed", "fish & seaweed", "fish hydrolysate"]),
+        Supply(name: "Neptune's Harvest fish & seaweed", category: .foliar, phrases: ["neptune's harvest", "neptunes harvest", "fish and seaweed", "fish & seaweed"]),
+        Supply(name: "Fish hydrolysate", category: .foliar, phrases: ["fish hydrolysate", "hydrolyzed fish"]),
         Supply(name: "Liquid kelp", category: .foliar, phrases: ["kelp", "liquid kelp", "seaweed extract", "liquid seaweed"]),
         Supply(name: "Maxicrop liquid kelp", category: .foliar, phrases: ["maxicrop"]),
         Supply(name: "Kelp meal", category: .amendment, phrases: ["kelp meal"]),
+        Supply(name: "MicroLife All Purpose", category: .fertilizer, phrases: ["microlife", "micro-life", "micro life"]),
         Supply(name: "Garden-tone", category: .fertilizer, phrases: ["garden-tone", "garden tone", "gardentone"]),
         Supply(name: "Tomato-tone", category: .fertilizer, phrases: ["tomato-tone", "tomato tone", "tomatotone"]),
         Supply(name: "Plant-tone", category: .fertilizer, phrases: ["plant-tone", "plant tone", "planttone"]),
@@ -48,18 +50,23 @@ public enum SupplyMentions {
         Supply(name: "Blood meal", category: .fertilizer, phrases: ["blood meal"]),
         Supply(name: "Feather meal", category: .fertilizer, phrases: ["feather meal"]),
         Supply(name: "Bone meal", category: .fertilizer, phrases: ["bone meal"]),
-        Supply(name: "Manure", category: .compost, phrases: ["manure", "aged manure", "chicken manure", "horse manure", "cow manure", "rabbit manure"]),
+        Supply(name: "Manure", category: .compost, phrases: ["manure", "aged manure", "horse manure", "cow manure", "rabbit manure"]),
+        Supply(name: "Chicken manure", category: .compost, phrases: ["chicken manure", "chicken litter", "chicken poop", "poultry litter", "poultry manure"]),
         Supply(name: "Coffee grounds", category: .compost, phrases: ["coffee grounds", "used coffee"]),
         Supply(name: "Kitchen scraps", category: .compost, phrases: ["kitchen scraps", "food scraps", "veggie scraps", "vegetable scraps"]),
         Supply(name: "Wood ash", category: .amendment, phrases: ["wood ash", "wood ashes", "fireplace ash", "fireplace ashes"]),
         Supply(name: "Eggshells", category: .amendment, phrases: ["eggshell", "egg shell"]),
+        Supply(name: "Crushed oyster shells", category: .amendment, phrases: ["oyster shell"]),
         Supply(name: "Garden lime", category: .amendment, phrases: ["garden lime", "dolomite lime", "dolomitic lime", "pelletized lime", "agricultural lime"]),
         Supply(name: "Gypsum", category: .amendment, phrases: ["gypsum"]),
         Supply(name: "Rock dust", category: .rockDust, phrases: ["rock dust", "basalt dust", "greensand"]),
         Supply(name: "Azomite", category: .rockDust, phrases: ["azomite"]),
+        Supply(name: "Biochar", category: .amendment, phrases: ["biochar", "bio-char", "bio char"]),
+        Supply(name: "Broth bones", category: .amendment, phrases: ["bones from bone broth", "broth bones", "soup bones", "leftover bones"]),
+        Supply(name: "Topsoil", category: .amendment, phrases: ["topsoil", "top soil"]),
         Supply(name: "Mycorrhizal inoculant", category: .biological, phrases: ["mycorrhizae", "mycorrhizal", "myco"]),
         // Mulch
-        Supply(name: "Shredded leaves", category: .mulch, phrases: ["shredded leaves", "leaf pile", "pile of leaves", "bags of leaves", "bag of leaves", "fall leaves", "leaf mold"]),
+        Supply(name: "Shredded leaves", category: .mulch, phrases: ["shredded leaves", "leaf pile", "pile of leaves", "bags of leaves", "bag of leaves", "fall leaves", "leaf mold", "oak leaves", "aged leaves"]),
         Supply(name: "Grass clippings", category: .mulch, phrases: ["grass clippings", "lawn clippings"]),
         Supply(name: "Straw", category: .mulch, phrases: ["straw", "straw bale", "bale of straw"]),
         Supply(name: "Wood chips", category: .mulch, phrases: ["wood chips", "arborist chips", "chip mulch"]),

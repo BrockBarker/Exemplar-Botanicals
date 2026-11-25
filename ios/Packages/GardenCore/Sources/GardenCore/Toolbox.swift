@@ -51,12 +51,27 @@ public struct RankedOption: Identifiable, Hashable, Sendable {
 }
 
 public enum Toolbox {
+    /// David never uses rock phosphate, blood meal, bone meal or other concentrated
+    /// single-nutrient feeds, avoids salt fertilizers like calcium nitrate, and avoids chicken
+    /// litter because of the arsenic (backend/persona/method.md), so none of these are offered
+    /// here even when owned.
+    static let avoided = [
+        "blood meal", "bone meal", "rock phosphate", "feather meal", "bat guano", "sul-po-mag", "langbeinite",
+        "calcium nitrate", "potassium nitrate", "ammonium nitrate", "sodium nitrate", "chilean nitrate", "ammonium sulfate",
+        "chicken", "poultry",
+    ]
+
     public static let options: [OrganicOption] = [
         // Feeding
         OrganicOption(
             id: "compost", name: "Compost or worm castings", tier: .free, needs: [.feed],
             howTo: "Side-dress about an inch of finished compost around the plant and scratch it in lightly, then water.",
             keywords: ["compost", "casting", "vermicompost"]
+        ),
+        OrganicOption(
+            id: "manure", name: "Well-aged manure (cow, horse or rabbit)", tier: .free, needs: [.feed],
+            howTo: "Side-dress about an inch of well-aged or composted manure around the plant and scratch it in lightly, then water.",
+            caution: "Age it at least 4 to 6 months first. David avoids chicken litter because of the arsenic.", keywords: ["manure"]
         ),
         OrganicOption(
             id: "comfrey_tea", name: "Comfrey or weed tea", tier: .free, needs: [.feed],
@@ -73,6 +88,18 @@ public enum Toolbox {
             id: "alfalfa", name: "Alfalfa pellets", tier: .lowCost, needs: [.feed],
             howTo: "Scratch in about a cup per plant (2 to 3 pounds per 100 sq ft) and water it in.",
             price: "about $20 to $30 for 40 to 50 lb at a feed store", keywords: ["alfalfa"]
+        ),
+        // David's own go-to feed (backend/persona/method.md): first among the products to buy.
+        OrganicOption(
+            id: "microlife", name: "MicroLife All Purpose granular (David's go-to)", tier: .branded, needs: [.feed],
+            howTo: "Scratch it into the top inch around the plant at the bag's rate and water it in. At transplanting, mix a handful into each planting hole.",
+            price: "roughly $30 to $60 for a 40 lb bag", keywords: ["microlife", "micro-life", "micro life"]
+        ),
+        // David's seedling and transplant spray. No keywords: owning one half isn't owning the mix.
+        OrganicOption(
+            id: "kelp_fish", name: "Liquid kelp and fish hydrolysate, mixed (David's spray)", tier: .branded, needs: [.foliar],
+            howTo: "Mix both at their label's foliar rate in a small spray bottle and mist the leaves, tops and undersides. David does seedlings about once a week and keeps going for 2 or 3 weeks after transplanting.",
+            price: "about $15 to $35 per quart of each"
         ),
         OrganicOption(
             id: "fish_emulsion", name: "Fish emulsion (e.g. Alaska 5-1-1)", tier: .branded, needs: [.feed],
@@ -91,23 +118,9 @@ public enum Toolbox {
             caution: "Slow in cold soil.", price: "about $12 to $25 for 4 to 8 lb",
             keywords: ["garden-tone", "tomato-tone", "garden tone", "tomato tone", "plant-tone", "dr. earth", "dr earth", "granular"]
         ),
-        OrganicOption(
-            id: "blood_meal", name: "Blood meal (12-0-0)", tier: .branded, needs: [.feed],
-            howTo: "About 1 tablespoon per plant scratched in and watered well.",
-            caution: "Easy to overdo and burn plants; attracts dogs.", price: "about $12 to $20 for 3 lb", keywords: ["blood meal"]
-        ),
-        OrganicOption(
-            id: "feather_meal", name: "Feather meal (slow nitrogen)", tier: .branded, needs: [.feed],
-            howTo: "About 2 tablespoons per plant scratched in; it feeds for months.",
-            price: "about $15 to $25 for 5 lb", keywords: ["feather meal"]
-        ),
 
         // Foliar
-        OrganicOption(
-            id: "compost_tea", name: "Compost tea", tier: .free, needs: [.foliar],
-            howTo: "Steep a shovelful of compost in a bucket of water overnight, strain through cloth, and spray leaves top and bottom.",
-            keywords: ["compost tea"]
-        ),
+        // No compost tea: David finds it more effort than result. Keep it simple.
         OrganicOption(
             id: "comfrey_foliar", name: "Comfrey tea, diluted", tier: .free, needs: [.foliar],
             howTo: "Dilute about 1 to 15, strain well, and spray leaves top and bottom.", keywords: ["comfrey"]
@@ -125,7 +138,7 @@ public enum Toolbox {
 
         // Mulch
         OrganicOption(
-            id: "leaves", name: "Shredded leaves", tier: .free, needs: [.mulch],
+            id: "leaves", name: "Aged or shredded leaves (oak is David's favorite)", tier: .free, needs: [.mulch],
             howTo: "Spread 2 to 3 inches, kept an inch or two off the stems.", keywords: ["leaves", "leaf mold"]
         ),
         OrganicOption(
@@ -206,6 +219,8 @@ public enum Toolbox {
 
         for item in inventory {
             let lower = item.name.lowercased()
+            // Even if they own one, David's method skips concentrated feeds, salts and chicken litter.
+            if avoided.contains(where: { lower.contains($0) }) { continue }
             if let match = candidates.first(where: { opt in opt.keywords.contains(where: { lower.contains($0) }) }) {
                 guard !ownedOptionIDs.contains(match.id) else { continue }
                 ownedOptionIDs.insert(match.id)

@@ -152,12 +152,14 @@ final class NudgeRuleTests: XCTestCase {
         let tomato = Fixtures.plant("Big Beef", crop: "tomato", plantedDaysAgo: 30)
         let state = Fixtures.state(plants: [tomato], weather: Fixtures.weather(hours: Fixtures.hours()))
         let nudge = try XCTUnwrap(candidates(state, kind: .foliar).first)
-        // It's 6 AM, so this morning's window has started; the evening one is next.
-        XCTAssertEqual(nudge.title, "Foliar window today 6–8 PM")
-        XCTAssertEqual(nudge.fireDate, Fixtures.at(0, 15))
-        XCTAssertEqual(nudge.expires, Fixtures.at(0, 20))
-        XCTAssertTrue(nudge.body.hasPrefix("70°F, calm and dry."))
-        XCTAssertTrue(nudge.body.contains("compost tea"))
+        // Only early mornings, before the dew dries (David). It's 6 AM, so this morning's window
+        // has started; tomorrow's is next, with a reminder the evening before.
+        XCTAssertEqual(nudge.title, "Foliar window tomorrow 6–9 AM")
+        XCTAssertEqual(nudge.fireDate, Fixtures.at(0, 18, 30))
+        XCTAssertEqual(nudge.expires, Fixtures.at(1, 9))
+        XCTAssertTrue(nudge.body.hasPrefix("70°F, calm and dry. Before the dew dries,"))
+        XCTAssertTrue(nudge.body.contains("liquid kelp and fish hydrolysate"), "David's spray when they have nothing else")
+        XCTAssertTrue(nudge.detail.contains("stomata"))
     }
 
     func testFoliarUsesWhatTheGardenerOwns() throws {
